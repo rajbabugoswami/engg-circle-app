@@ -12,7 +12,7 @@ const generateCertificate = async (req, res) => {
     
     // Fetch participant and event details
     const [pRows] = await pool.query(`
-      SELECT p.name, p.score, p.rank_pos, p.email, e.name as event_name, e.event_date, e.cert_template_url 
+      SELECT p.name, p.score, p.rank_pos, p.email, e.name as event_name, e.event_date, e.cert_template_url, e.cert_template_config
       FROM participants p 
       JOIN events e ON p.event_id = e.id 
       WHERE p.id = ? AND e.id = ?
@@ -52,15 +52,56 @@ const generateCertificate = async (req, res) => {
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const normalFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
     
-    // Draw Text (Centered relatively)
-    if (!bgImage) page.drawText('CERTIFICATE OF PARTICIPATION', { x: width/2 - 250, y: 600, size: 30, font, color: rgb(0.2, 0.2, 0.8) });
-    
-    page.drawText(data.name, { x: width/2 - (data.name.length * 9), y: 450, size: 40, font, color: rgb(0, 0, 0) });
-    page.drawText(data.event_name, { x: width/2 - (data.event_name.length * 8), y: 350, size: 30, font, color: rgb(0.1, 0.1, 0.1) });
-    page.drawText(`Rank: ${data.rank_pos || '-'}    Score: ${data.score} pts`, { x: width/2 - 120, y: 250, size: 20, font: normalFont });
-    page.drawText(`Date: ${new Date(data.event_date).toLocaleDateString()}`, { x: width/2 - 70, y: 200, size: 18, font: normalFont });
-    
-    page.drawText(`ID: ${certId}`, { x: 50, y: 50, size: 12, font: normalFont });
+    // Draw Text using cert_template_config
+    if (bgImage && data.cert_template_config) {
+      let config = data.cert_template_config;
+      if (typeof config === 'string') {
+        try { config = JSON.parse(config); } catch (e) { config = []; }
+      }
+      
+      for (const field of config) {
+        if (!field.active) continue;
+        
+        let textToDraw = '';
+        if (field.id === 'studentName') textToDraw = data.name || '';
+        if (field.id === 'eventName') textToDraw = data.event_name || '';
+        if (field.id === 'rank') textToDraw = `Rank ${data.rank_pos}`;
+        if (field.id === 'date') textToDraw = new Date(data.event_date).toLocaleDateString();
+        if (field.id === 'certId') textToDraw = `ID: ${certId}`;
+
+        // Convert hex color to RGB
+        const hex = (field.color || '#000000').replace('#', '');
+        const r = parseInt(hex.substring(0,2), 16) / 255;
+        const g = parseInt(hex.substring(2,4), 16) / 255;
+        const b = parseInt(hex.substring(4,6), 16) / 255;
+
+        const px = (field.x / 100) * width;
+        const py = height - ((field.y / 100) * height);
+        
+        const textFont = field.id === 'studentName' ? font : normalFont;
+        const textWidth = textFont.widthOfTextAtSize(textToDraw, field.fontSize);
+        
+        let drawX = px;
+        if (field.align === 'center') drawX = px - (textWidth / 2);
+        if (field.align === 'right') drawX = px - textWidth;
+
+        page.drawText(textToDraw, {
+          x: drawX,
+          y: py,
+          size: field.fontSize,
+          font: textFont,
+          color: rgb(r, g, b)
+        });
+      }
+    } else {
+      // Fallback if no template or config
+      if (!bgImage) page.drawText('CERTIFICATE OF PARTICIPATION', { x: width/2 - 250, y: 600, size: 30, font, color: rgb(0.2, 0.2, 0.8) });
+      page.drawText(data.name, { x: width/2 - (data.name.length * 9), y: 450, size: 40, font, color: rgb(0, 0, 0) });
+      page.drawText(data.event_name, { x: width/2 - (data.event_name.length * 8), y: 350, size: 30, font, color: rgb(0.1, 0.1, 0.1) });
+      page.drawText(`Rank: ${data.rank_pos || '-'}    Score: ${data.score} pts`, { x: width/2 - 120, y: 250, size: 20, font: normalFont });
+      page.drawText(`Date: ${new Date(data.event_date).toLocaleDateString()}`, { x: width/2 - 70, y: 200, size: 18, font: normalFont });
+      page.drawText(`ID: ${certId}`, { x: 50, y: 50, size: 12, font: normalFont });
+    }
 
     // Generate QR Code
     const verifyUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/verify-certificate?id=${certId}`;
@@ -187,29 +228,39 @@ const resendAllFailed = async (req, res) => {
 
 const triggerBulkCertificateGeneration = async (eventId) => {
   try {
-    const [events] = await pool.query('SELECT cert_generation_enabled, auto_email_enabled FROM events WHERE id = ?', [eventId]);
+    const [events] = await pool.query('SELECT cert_generation_enabled, auto_email_enabled, certificate_rank_limit FROM events WHERE id = ?', [eventId]);
     if (events.length === 0 || !events[0].cert_generation_enabled) return;
     const autoEmail = events[0].auto_email_enabled;
+    const rankLimit = events[0].certificate_rank_limit || 3;
 
-    const [participants] = await pool.query('SELECT id FROM participants WHERE event_id = ? ORDER BY score DESC, joined_at ASC', [eventId]);
+    // Fetch all participants to calculate ranks
+    const [participants] = await pool.query('SELECT id, score FROM participants WHERE event_id = ? ORDER BY score DESC, joined_at ASC', [eventId]);
     
-    for (let p of participants) {
-      // Mock request/response objects to reuse generateCertificate logic safely
-      // In production, we'd extract the logic into a separate reusable service function.
-      const req = { body: { eventId, participantId: p.id } };
-      let generatedCertId = null;
+    // Assign and save ranks, only process up to rankLimit
+    for (let i = 0; i < participants.length; i++) {
+      const p = participants[i];
+      const rank = i + 1;
       
-      const res = {
-        json: (data) => { if (data.certificateId) generatedCertId = data.certificateId; },
-        status: () => res
-      };
+      // Save rank to DB
+      await pool.query('UPDATE participants SET rank_pos = ? WHERE id = ?', [rank, p.id]);
       
-      await generateCertificate(req, res);
-      
-      if (generatedCertId && autoEmail) {
-        const emailReq = { body: { certificateId: generatedCertId } };
-        const emailRes = { json: () => {}, status: () => emailRes };
-        await sendCertificateEmail(emailReq, emailRes);
+      // Only generate certificates for those within rank limit
+      if (rank <= rankLimit) {
+        const req = { body: { eventId, participantId: p.id } };
+        let generatedCertId = null;
+        
+        const res = {
+          json: (data) => { if (data.certificateId) generatedCertId = data.certificateId; },
+          status: () => res
+        };
+        
+        await generateCertificate(req, res);
+        
+        if (generatedCertId && autoEmail) {
+          const emailReq = { body: { certificateId: generatedCertId } };
+          const emailRes = { json: () => {}, status: () => emailRes };
+          await sendCertificateEmail(emailReq, emailRes);
+        }
       }
     }
   } catch (err) {
@@ -217,4 +268,36 @@ const triggerBulkCertificateGeneration = async (eventId) => {
   }
 };
 
-module.exports = { generateCertificate, verifyCertificate, sendCertificateEmail, resendCertificate, resendAllFailed, triggerBulkCertificateGeneration };
+const downloadZip = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const [certs] = await pool.query('SELECT pdf_url, participant_id FROM certificates WHERE event_id = ? AND status = "GENERATED"', [eventId]);
+    
+    if (certs.length === 0) return res.status(404).json({ message: 'No certificates found for this event' });
+
+    const archiver = require('archiver');
+    res.attachment(`certificates_${eventId}.zip`);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    
+    archive.on('error', (err) => { throw err; });
+    archive.pipe(res);
+    
+    for (const cert of certs) {
+      if (cert.pdf_url) {
+        const filePath = path.join(__dirname, '../../', cert.pdf_url);
+        if (fs.existsSync(filePath)) {
+          const [p] = await pool.query('SELECT name FROM participants WHERE id = ?', [cert.participant_id]);
+          const name = p.length > 0 ? p[0].name.replace(/[^a-zA-Z0-9]/g, '_') : cert.participant_id;
+          archive.file(filePath, { name: `${name}_Certificate.pdf` });
+        }
+      }
+    }
+    
+    await archive.finalize();
+  } catch (error) {
+    console.error('ZIP error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { generateCertificate, verifyCertificate, sendCertificateEmail, resendCertificate, resendAllFailed, triggerBulkCertificateGeneration, downloadZip };

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { generateCertificate, verifyCertificate, sendCertificateEmail, resendCertificate, resendAllFailed } = require('../controllers/certificateController');
+const { generateCertificate, verifyCertificate, sendCertificateEmail, resendCertificate, resendAllFailed, downloadZip } = require('../controllers/certificateController');
 const { protect } = require('../middleware/auth');
 const multer = require('multer');
 
@@ -12,5 +12,6 @@ router.post('/generate', protect, generateCertificate);
 router.post('/send', protect, sendCertificateEmail);
 router.post('/resend/:participantId', protect, resendCertificate);
 router.post('/resend-all-failed/:eventId', protect, resendAllFailed);
+router.get('/zip/:eventId', protect, downloadZip);
 
 module.exports = router;

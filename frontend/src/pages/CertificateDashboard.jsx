@@ -189,6 +189,12 @@ const CertificateDashboard = () => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold">Participants & Certificates</h2>
             <div className="flex gap-4">
+              <button onClick={() => {
+                const token = localStorage.getItem('adminToken');
+                window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/certificates/zip/${eventId}?token=${token}`, '_blank');
+              }} className="bg-indigo-600 text-white px-4 py-2 rounded font-bold hover:bg-indigo-700">
+                Download ZIP
+              </button>
               <button onClick={exportToExcel} className="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700">
                 Export Excel
               </button>
