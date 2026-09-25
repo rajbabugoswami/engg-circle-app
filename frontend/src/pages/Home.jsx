@@ -15,11 +15,11 @@ const Home = () => {
           <div className="flex items-center justify-center">
             <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-14 md:h-16 w-auto object-contain" />
           </div>
-          <nav className="flex flex-wrap justify-center gap-4 md:gap-6">
-            <Link to="/join" className="text-gray-300 hover:text-white font-medium transition-colors">Join Quiz</Link>
-            <Link to="/student/dashboard" className="text-gray-300 hover:text-white font-medium transition-colors">My Events</Link>
-            <Link to="/verify-certificate" className="text-gray-300 hover:text-white font-medium transition-colors">Verify</Link>
-            <Link to="/admin" className="text-gray-300 hover:text-white font-medium transition-colors">Admin</Link>
+          <nav className="flex flex-wrap justify-center gap-2 md:gap-4 items-center">
+            <Link to="/join" className="px-5 py-2.5 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-300 hover:text-white font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Join Quiz</Link>
+            <Link to="/student/dashboard" className="px-5 py-2.5 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-300 hover:text-white font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">My Events</Link>
+            <Link to="/verify-certificate" className="px-5 py-2.5 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-300 hover:text-white font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Verify</Link>
+            <Link to="/admin" className="px-5 py-2.5 rounded-full border border-purple-500/30 bg-purple-500/10 hover:border-purple-400 hover:bg-purple-500/20 text-purple-100 hover:text-white font-bold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">Admin</Link>
           </nav>
         </div>
       </header>
