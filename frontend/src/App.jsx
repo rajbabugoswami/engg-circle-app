@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import JoinQuiz from './pages/JoinQuiz';
 import Registration from './pages/Registration';
+import StudentDashboard from './pages/StudentDashboard';
 import VerifyCertificate from './pages/VerifyCertificate';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
@@ -20,6 +21,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/join" element={<JoinQuiz />} />
         <Route path="/register" element={<Registration />} />
         <Route path="/quiz" element={<QuizInterface />} />

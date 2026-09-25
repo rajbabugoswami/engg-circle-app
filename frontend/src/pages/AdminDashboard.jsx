@@ -23,6 +23,31 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) return;
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchEvents();
+    } catch (error) {
+      alert('Failed to delete event');
+    }
+  };
+
+  const handleDuplicate = async (id) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${id}/duplicate`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchEvents();
+    } catch (error) {
+      alert('Failed to duplicate event');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="flex justify-between items-center mb-8">
@@ -84,6 +109,9 @@ const AdminDashboard = () => {
                   <Link to={`/admin/events/${event.id}/certificate-editor`} className="text-blue-600 hover:text-blue-900">Cert Template</Link>
                   <Link to={`/admin/events/${event.id}/certificates`} className="text-purple-600 hover:text-purple-900">Certificates</Link>
                   {event.status !== 'COMPLETED' && <Link to={`/admin/live/${event.id}`} className="text-green-600 hover:text-green-900 font-bold">START</Link>}
+                  
+                  <button onClick={() => handleDuplicate(event.id)} className="text-orange-600 hover:text-orange-900 ml-4 font-semibold">Copy</button>
+                  <button onClick={() => handleDelete(event.id)} className="text-red-600 hover:text-red-900 font-semibold">Delete</button>
                 </td>
               </tr>
             ))}

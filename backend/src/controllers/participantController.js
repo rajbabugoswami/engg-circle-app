@@ -73,5 +73,28 @@ const joinQuiz = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+const getMyEvents = async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
 
-module.exports = { register, joinQuiz };
+    const [results] = await pool.query(`
+      SELECT 
+        e.name as event_name, 
+        p.id, p.score, p.rank_pos, 
+        c.certificate_id, c.pdf_url
+      FROM participants p
+      JOIN events e ON p.event_id = e.id
+      LEFT JOIN certificates c ON p.id = c.participant_id
+      WHERE p.email = ?
+      ORDER BY e.event_date DESC
+    `, [email]);
+
+    res.json(results);
+  } catch (error) {
+    console.error('getMyEvents Error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { register, joinQuiz, getMyEvents };

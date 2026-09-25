@@ -30,6 +30,8 @@ router.route('/:id')
   .put(updateEvent)
   .delete(deleteEvent);
 
+router.post('/:id/duplicate', require('../controllers/eventController').duplicateEvent);
+
 router.route('/:eventId/questions')
   .get(getQuestions)
   .post(upload.single('image'), addQuestion);

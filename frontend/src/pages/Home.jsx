@@ -20,6 +20,7 @@ const Home = () => {
           </div>
           <nav className="space-x-6">
             <Link to="/join" className="text-gray-300 hover:text-white font-medium transition-colors">Join Quiz</Link>
+            <Link to="/student/dashboard" className="text-gray-300 hover:text-white font-medium transition-colors">My Events</Link>
             <Link to="/verify-certificate" className="text-gray-300 hover:text-white font-medium transition-colors">Verify</Link>
             <Link to="/admin" className="text-gray-300 hover:text-white font-medium transition-colors">Admin</Link>
           </nav>

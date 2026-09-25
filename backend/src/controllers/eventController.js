@@ -62,6 +62,36 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+const duplicateEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [events] = await pool.query('SELECT * FROM events WHERE id = ? AND admin_id = ?', [id, req.admin.id]);
+    if (events.length === 0) return res.status(404).json({ message: 'Event not found' });
+    
+    const ev = events[0];
+    const newQuizCode = ev.quiz_code + '_COPY_' + Math.floor(Math.random() * 1000);
+    
+    const [result] = await pool.query(
+      'INSERT INTO events (admin_id, name, description, event_date, start_time, quiz_code, cert_generation_enabled, auto_email_enabled, certificate_rank_limit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [req.admin.id, ev.name + ' (Copy)', ev.description, ev.event_date, ev.start_time, newQuizCode, ev.cert_generation_enabled, ev.auto_email_enabled, ev.certificate_rank_limit]
+    );
+    
+    // Duplicate questions
+    const [questions] = await pool.query('SELECT * FROM questions WHERE event_id = ?', [id]);
+    for (const q of questions) {
+      await pool.query(
+        'INSERT INTO questions (event_id, text, option_a, option_b, option_c, option_d, correct_option, time_limit, marks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [result.insertId, q.text, q.option_a, q.option_b, q.option_c, q.option_d, q.correct_option, q.time_limit, q.marks]
+      );
+    }
+    
+    res.json({ message: 'Event duplicated', newEventId: result.insertId });
+  } catch (error) {
+    console.error('Duplicate event error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const getResults = async (req, res) => {
   try {
     const { eventId } = req.params;
@@ -125,4 +155,4 @@ const getParticipants = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, getResults, uploadTemplate, saveTemplateConfig, getParticipants };
+module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, duplicateEvent, getResults, uploadTemplate, saveTemplateConfig, getParticipants };
