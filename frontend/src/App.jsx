@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import GalleryView from './pages/GalleryView';
 import JoinQuiz from './pages/JoinQuiz';
 import Registration from './pages/Registration';
 import StudentDashboard from './pages/StudentDashboard';
@@ -22,6 +23,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/gallery" element={<GalleryView />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/join" element={<JoinQuiz />} />
         <Route path="/register" element={<Registration />} />

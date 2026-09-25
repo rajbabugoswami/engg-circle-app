@@ -1,22 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [gallery, setGallery] = useState([]);
-
-  useEffect(() => {
-    const fetchGallery = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/gallery`);
-        setGallery(res.data);
-      } catch (error) {
-        console.error('Error fetching gallery', error);
-      }
-    };
-    fetchGallery();
-  }, []);
 
   return (
     <div className="min-h-screen bg-[#050914] flex flex-col text-white relative overflow-hidden" style={{ fontFamily: "'Poppins', sans-serif" }}>
@@ -49,6 +35,7 @@ const Home = () => {
           
           {/* Right: Desktop Nav */}
           <nav className="hidden md:flex items-center gap-2">
+            <Link to="/gallery" className="px-4 py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-base font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Gallery</Link>
             <Link to="/join" className="px-4 py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-base font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Join Quiz</Link>
             <Link to="/student/dashboard" className="px-4 py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-base font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">My Events</Link>
             <Link to="/verify-certificate" className="px-4 py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-base font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Verify</Link>
@@ -73,6 +60,7 @@ const Home = () => {
         {/* Mobile Dropdown Menu */}
         {isMenuOpen && (
           <nav className="md:hidden absolute top-full left-0 w-full bg-[#050914]/95 backdrop-blur-xl border-b border-blue-500/20 px-4 py-4 flex flex-col gap-3 shadow-2xl">
+            <Link to="/gallery" className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-gray-200 hover:text-white text-center font-semibold transition-all" onClick={() => setIsMenuOpen(false)}>Gallery</Link>
             <Link to="/join" className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-gray-200 hover:text-white text-center font-semibold transition-all" onClick={() => setIsMenuOpen(false)}>Join Quiz</Link>
             <Link to="/student/dashboard" className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-gray-200 hover:text-white text-center font-semibold transition-all" onClick={() => setIsMenuOpen(false)}>My Events</Link>
             <Link to="/verify-certificate" className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-gray-200 hover:text-white text-center font-semibold transition-all" onClick={() => setIsMenuOpen(false)}>Verify</Link>
@@ -98,29 +86,6 @@ const Home = () => {
           </div>
         </div>
       </main>
-
-      {/* Gallery Section */}
-      {gallery.length > 0 && (
-        <section className="relative z-10 py-16 px-4 md:px-8 bg-white/5 backdrop-blur-md border-t border-blue-500/20">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400 drop-shadow-lg">
-              Event Highlights
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {gallery.map(img => (
-                <div key={img.id} className="group relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:border-blue-400/50 transition-all duration-300 hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] hover:-translate-y-2 cursor-pointer">
-                  <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${img.image_url}`} alt={img.title} className="w-full h-64 object-cover transform transition-transform duration-700 group-hover:scale-110" />
-                  {img.title && (
-                    <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-[#050914] via-[#050914]/80 to-transparent">
-                      <p className="text-white font-semibold tracking-wide truncate">{img.title}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       <footer className="relative z-10 py-6 border-t border-white/10 text-center text-gray-400 text-sm flex flex-col items-center gap-2">
         <a href="https://www.instagram.com/the_engg_circle?stkn=a3Rod3RmaW83cTV4" target="_blank" rel="noreferrer" className="hover:text-pink-500 transition-colors flex items-center gap-2 font-medium">
