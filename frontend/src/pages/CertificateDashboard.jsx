@@ -55,16 +55,15 @@ const CertificateDashboard = () => {
   };
 
   const handleResend = async (participantId) => {
-    // We'll call a resend route
     try {
       const token = localStorage.getItem('adminToken');
       await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/certificates/resend/${participantId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('Resend triggered');
+      alert('Certificate successfully resent!');
       fetchData();
     } catch (err) {
-      alert('Failed to resend');
+      alert(`Failed to resend: ${err.response?.data?.error || err.response?.data?.message || err.message}`);
     }
   };
 
@@ -89,7 +88,7 @@ const CertificateDashboard = () => {
       });
       alert('Generation and sending started in the background. Please refresh after a minute.');
     } catch (err) {
-      alert('Failed to start bulk generation');
+      alert(`Failed to start bulk generation: ${err.response?.data?.error || err.message}`);
     }
   };
 
@@ -107,7 +106,7 @@ const CertificateDashboard = () => {
       alert('Certificate generated (and sent if auto-email is ON)!');
       fetchData();
     } catch (err) {
-      alert('Failed to generate or send');
+      alert(`Failed to generate or send: ${err.response?.data?.error || err.response?.data?.message || err.message}`);
     }
   };
 

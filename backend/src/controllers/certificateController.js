@@ -196,7 +196,13 @@ const sendCertificateEmail = async (req, res) => {
   } catch (error) {
     console.error('Email error:', error);
     await pool.query('UPDATE certificates SET email_status = ? WHERE certificate_id = ?', ['FAILED', req.body.certificateId]);
-    res.status(500).json({ message: 'Failed to send email' });
+    
+    let errorMessage = 'Failed to send email. Check SMTP credentials.';
+    if (error.message.includes('Invalid login') || error.message.includes('Authentication')) {
+      errorMessage = 'Email Authentication Failed. If using Gmail, you MUST use a 16-letter App Password, not your normal password.';
+    }
+    
+    res.status(500).json({ message: 'Failed to send email', error: errorMessage, rawError: error.message });
   }
 };
 
