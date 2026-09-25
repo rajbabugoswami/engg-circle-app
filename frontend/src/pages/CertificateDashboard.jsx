@@ -236,14 +236,14 @@ const CertificateDashboard = () => {
                 </button>
               </form>
 
-              <div className="mt-6 p-4 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg text-white">
-                <h4 className="font-bold mb-2 flex items-center gap-2">✨ Or Generate with DALL-E AI</h4>
+              <div className="mt-6 p-4 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-white">
+                <h4 className="font-bold mb-2 flex items-center gap-2">✨ Or Generate with AI</h4>
                 <form onSubmit={handleAITemplate} className="space-y-3">
                   <textarea required className="w-full border-none rounded p-2 text-gray-900 text-sm" rows="2"
                     placeholder="E.g., A premium cyber security event certificate background with dark blue and gold borders"
                     value={aiTemplatePrompt} onChange={e => setAiTemplatePrompt(e.target.value)}></textarea>
                   <button type="submit" disabled={isAiGenerating}
-                    className="bg-white text-teal-700 px-4 py-2 rounded font-bold hover:bg-gray-100 disabled:opacity-50 text-sm">
+                    className="bg-white text-purple-700 px-4 py-2 rounded font-bold hover:bg-gray-100 disabled:opacity-50 text-sm">
                     {isAiGenerating ? '🤖 Generating...' : 'Generate Template'}
                   </button>
                 </form>

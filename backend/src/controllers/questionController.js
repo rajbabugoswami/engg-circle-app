@@ -43,16 +43,16 @@ const generateQuestionsWithAI = async (req, res) => {
     const [events] = await pool.query('SELECT id FROM events WHERE id = ? AND admin_id = ?', [eventId, req.admin.id]);
     if (events.length === 0) return res.status(403).json({ message: 'Unauthorized' });
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(400).json({ message: 'OPENAI_API_KEY not configured on server' });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(400).json({ message: 'GEMINI_API_KEY not configured on server' });
     }
 
-    const { OpenAI } = require('openai');
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const { GoogleGenAI } = require('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const systemInstruction = `You are a quiz question generator. Generate exactly ${count} multiple choice questions about the following topic or instructions: "${prompt}". 
-Output strictly as a JSON object containing a "questions" array.
-Each object in the "questions" array must have these exact keys:
+Output strictly as a JSON array of objects.
+Each object must have these exact keys:
 "question_text": The question string.
 "option_a": First option string.
 "option_b": Second option string.
@@ -60,19 +60,29 @@ Each object in the "questions" array must have these exact keys:
 "option_d": Fourth option string.
 "correct_option": The correct option strictly as one of: "A", "B", "C", "D".`;
 
-    const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'system', content: systemInstruction }],
-        response_format: { type: "json_object" }
+    const response = await ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: systemInstruction,
+        config: {
+            responseMimeType: "application/json",
+        }
     });
     
-    let rawText = response.choices[0].message.content.trim();
+    let rawText = response.text.trim();
+    if (rawText.startsWith('```')) {
+       rawText = rawText.replace(/^```(json)?\n?/, '').replace(/\n?```$/, '').trim();
+    }
+    
     let questionsArray;
     try {
-      const parsed = JSON.parse(rawText);
-      questionsArray = parsed.questions || Object.values(parsed)[0];
+      questionsArray = JSON.parse(rawText);
     } catch (e) {
       throw new Error("AI returned invalid JSON: " + rawText);
+    }
+    
+    if (!Array.isArray(questionsArray)) {
+        // Fallback if it returned an object with a nested array
+        questionsArray = questionsArray.questions || Object.values(questionsArray)[0];
     }
 
     let inserted = 0;

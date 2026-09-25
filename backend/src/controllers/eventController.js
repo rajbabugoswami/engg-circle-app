@@ -163,22 +163,23 @@ const generateTemplateWithAI = async (req, res) => {
     const [events] = await pool.query('SELECT id FROM events WHERE id = ? AND admin_id = ?', [eventId, req.admin.id]);
     if (events.length === 0) return res.status(403).json({ message: 'Unauthorized' });
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(400).json({ message: 'OPENAI_API_KEY not configured on server' });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(400).json({ message: 'GEMINI_API_KEY not configured on server' });
     }
 
-    const { OpenAI } = require('openai');
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const { GoogleGenAI } = require('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    const response = await openai.images.generate({
-       model: 'dall-e-3',
+    const response = await ai.models.generateImages({
+       model: 'imagen-3.0-generate-001',
        prompt: prompt,
-       n: 1,
-       size: "1024x1024",
-       response_format: "b64_json"
+       config: {
+         numberOfImages: 1,
+         aspectRatio: "4:3"
+       }
     });
 
-    const base64Image = response.data[0].b64_json;
+    const base64Image = response?.generatedImages?.[0]?.image?.imageBytes;
     if (!base64Image) {
         throw new Error('No image returned by AI');
     }
