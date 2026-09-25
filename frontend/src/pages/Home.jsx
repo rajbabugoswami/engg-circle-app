@@ -5,7 +5,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-[#050914] flex flex-col font-sans text-white relative overflow-hidden">
       {/* Background logo - highly visible behind text */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] md:w-[600px] md:h-[600px] opacity-30 bg-center bg-no-repeat bg-cover rounded-full pointer-events-none" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 sm:w-[350px] sm:h-[350px] md:w-[600px] md:h-[600px] opacity-30 bg-center bg-no-repeat bg-cover rounded-full pointer-events-none" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
       <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob pointer-events-none"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-2000 pointer-events-none"></div>
       <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-4000 pointer-events-none"></div>
@@ -30,15 +30,15 @@ const Home = () => {
 
       <main className="flex-grow flex items-center justify-center relative z-10 p-4 md:p-8">
         <div className="text-center px-4 max-w-5xl mx-auto flex flex-col justify-center items-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 mt-4">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 md:mb-8 mt-4">
             Talk. Build. <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2a9df4] to-blue-300">Innovate.</span>
           </h1>
-          <p className="mt-6 text-xl text-gray-300 max-w-2xl mx-auto mb-12">
+          <p className="mt-4 md:mt-6 text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 md:mb-12">
             The official real-time platform for live engineering quizzes, polls, and certificates. 
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <Link to="/join" className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-lg font-bold shadow-lg hover:shadow-purple-500/50 transition-all hover:-translate-y-1 overflow-hidden">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 w-full sm:w-auto">
+            <Link to="/join" className="group relative w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-base md:text-lg font-bold shadow-lg hover:shadow-purple-500/50 transition-all hover:-translate-y-1 overflow-hidden flex justify-center items-center">
               <span className="relative z-10">Join a Quiz Now</span>
               <div className="absolute inset-0 h-full w-full bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
             </Link>
