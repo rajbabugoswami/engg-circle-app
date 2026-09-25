@@ -262,16 +262,7 @@ const CertificateDashboard = () => {
                   </button>
                 </div>
                 
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-700 font-medium">Auto-Email Certificates immediately</span>
-                  <button 
-                    onClick={() => toggleSetting('auto_email_enabled', !event.auto_email_enabled)}
-                    className={`px-3 py-1 rounded font-bold text-xs ${event.auto_email_enabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}
-                  >
-                    {event.auto_email_enabled ? 'ON (Click to Disable)' : 'OFF (Click to Enable)'}
-                  </button>
-                </div>
-                
+
                 <div className="flex items-center justify-between mt-4">
                   <span className="text-gray-700 font-medium">Rank Limit (0 for ALL participants)</span>
                   <input 
