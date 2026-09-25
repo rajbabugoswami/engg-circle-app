@@ -170,18 +170,31 @@ const generateTemplateWithAI = async (req, res) => {
     const { GoogleGenAI } = require('@google/genai');
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    const response = await ai.models.generateImages({
-       model: 'imagen-3.0-generate-001',
-       prompt: prompt,
+    const response = await ai.models.generateContent({
+       model: 'gemini-3.1-flash-image-preview',
+       contents: prompt,
        config: {
-         numberOfImages: 1,
-         aspectRatio: "4:3"
+         responseModalities: ["IMAGE"],
        }
     });
 
-    const base64Image = response?.generatedImages?.[0]?.image?.imageBytes;
+    let base64Image = null;
+    
+    // Attempt to extract base64 from the standard parts structure
+    if (response.candidates && response.candidates[0] && response.candidates[0].content && response.candidates[0].content.parts) {
+      const imgPart = response.candidates[0].content.parts.find(p => p.inlineData);
+      if (imgPart) {
+        base64Image = imgPart.inlineData.data;
+      }
+    }
+    
+    // Fallback extraction just in case
+    if (!base64Image && response.generatedImages && response.generatedImages[0]) {
+      base64Image = response.generatedImages[0].image?.imageBytes;
+    }
+
     if (!base64Image) {
-        throw new Error('No image returned by AI');
+        throw new Error('No image returned by AI. Please try again.');
     }
 
     const fs = require('fs');
