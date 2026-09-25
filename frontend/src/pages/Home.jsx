@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#050914] flex flex-col font-sans text-white relative overflow-hidden">
       {/* Background logo - highly visible behind text */}
@@ -11,21 +13,46 @@ const Home = () => {
       <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-4000 pointer-events-none"></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full mix-blend-screen filter blur-[150px] opacity-20 pointer-events-none"></div>
 
-      <header className="relative z-10 bg-white/5 backdrop-blur-md border-b border-blue-500/20 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4">
-          <div className="flex items-center justify-center">
-            <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-10 w-10 md:h-14 md:w-14 rounded-full object-cover shadow-[0_0_15px_rgba(59,130,246,0.3)] border-2 border-blue-400/30" />
+      <header className="relative z-50 bg-white/5 backdrop-blur-md border-b border-blue-500/20 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
+          
+          {/* Left: Logo */}
+          <div className="flex items-center">
+            <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover shadow-[0_0_15px_rgba(59,130,246,0.3)] border-2 border-blue-400/30" />
           </div>
-          <nav 
-            className="flex flex-row md:flex-wrap overflow-x-auto md:overflow-visible justify-start md:justify-center gap-3 md:gap-4 items-center w-full md:w-auto mt-3 md:mt-0 pb-1 md:pb-0 px-1 md:px-0"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            <Link to="/join" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 bg-white/5 md:bg-transparent text-gray-200 hover:text-white text-sm md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Join Quiz</Link>
-            <Link to="/student/dashboard" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 bg-white/5 md:bg-transparent text-gray-200 hover:text-white text-sm md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">My Events</Link>
-            <Link to="/verify-certificate" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 bg-white/5 md:bg-transparent text-gray-200 hover:text-white text-sm md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Verify</Link>
-            <Link to="/admin" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 bg-purple-500/20 md:bg-purple-500/10 rounded-lg border border-transparent hover:border-purple-400 hover:bg-purple-500/30 text-purple-100 hover:text-white text-sm md:text-base font-bold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">Admin</Link>
+          
+          {/* Right: Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-2">
+            <Link to="/join" className="px-4 py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-base font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Join Quiz</Link>
+            <Link to="/student/dashboard" className="px-4 py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-base font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">My Events</Link>
+            <Link to="/verify-certificate" className="px-4 py-2 rounded-lg border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-base font-semibold transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Verify</Link>
+            <Link to="/admin" className="px-4 py-2 ml-2 bg-purple-500/20 rounded-lg border border-purple-500/40 hover:border-purple-400 hover:bg-purple-500/30 text-purple-100 hover:text-white text-base font-bold transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">Admin</Link>
           </nav>
+
+          {/* Right: Mobile Hamburger Icon */}
+          <button 
+            className="md:hidden text-gray-200 hover:text-white focus:outline-none p-2 bg-white/5 rounded-lg border border-white/10"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              {isMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+              )}
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {isMenuOpen && (
+          <nav className="md:hidden absolute top-full left-0 w-full bg-[#050914]/95 backdrop-blur-xl border-b border-blue-500/20 px-4 py-4 flex flex-col gap-3 shadow-2xl">
+            <Link to="/join" className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-gray-200 hover:text-white text-center font-semibold transition-all" onClick={() => setIsMenuOpen(false)}>Join Quiz</Link>
+            <Link to="/student/dashboard" className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-gray-200 hover:text-white text-center font-semibold transition-all" onClick={() => setIsMenuOpen(false)}>My Events</Link>
+            <Link to="/verify-certificate" className="px-4 py-3 bg-white/5 rounded-lg border border-white/10 text-gray-200 hover:text-white text-center font-semibold transition-all" onClick={() => setIsMenuOpen(false)}>Verify</Link>
+            <Link to="/admin" className="px-4 py-3 mt-2 bg-purple-500/20 rounded-lg border border-purple-500/40 text-purple-100 hover:text-white text-center font-bold transition-all" onClick={() => setIsMenuOpen(false)}>Admin</Link>
+          </nav>
+        )}
       </header>
 
       <main className="flex-grow flex items-center justify-center relative z-10 p-4 md:p-8">
