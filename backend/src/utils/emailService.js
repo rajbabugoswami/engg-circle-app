@@ -49,6 +49,11 @@ const sendRegistrationEmail = async (studentEmail, studentName, event) => {
             <strong>${event.organizer_name || 'Event Organizer'}</strong><br>
             ${event.institute_name || ''}
           </p>
+          <div style="text-align: center; margin-top: 20px;">
+            <a href="https://www.instagram.com/the_engg_circle?stkn=a3Rod3RmaW83cTV4" target="_blank" style="color: #e1306c; text-decoration: none; font-weight: bold; font-size: 14px;">
+              📷 Follow us on Instagram
+            </a>
+          </div>
         </div>
       </div>
     `

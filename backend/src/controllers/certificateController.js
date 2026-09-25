@@ -180,7 +180,7 @@ const sendCertificateEmail = async (req, res) => {
       from: process.env.SMTP_FROM,
       to: cert.email,
       subject: `Your Certificate – ${cert.event_name}`,
-      text: `Hello ${cert.name},\n\nCongratulations! You successfully participated in ${cert.event_name}.\nScore: ${cert.score}\nCertificate ID: ${cert.certificate_id}\n\nYour certificate is attached.`,
+      text: `Hello ${cert.name},\n\nCongratulations! You successfully participated in ${cert.event_name}.\nScore: ${cert.score}\nCertificate ID: ${cert.certificate_id}\n\nYour certificate is attached.\n\nFollow us on Instagram for updates:\nhttps://www.instagram.com/the_engg_circle?stkn=a3Rod3RmaW83cTV4`,
       attachments: [{ filename: `${cert.certificate_id}.pdf`, path: filePath }]
     });
 
