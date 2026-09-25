@@ -62,22 +62,10 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm font-medium">Total Events</h3>
-          <p className="text-3xl font-bold">{stats.totalEvents}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm font-medium">Total Participants</h3>
-          <p className="text-3xl font-bold">{stats.totalParticipants}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm font-medium">Total Questions</h3>
-          <p className="text-3xl font-bold">{stats.totalQuestions}</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-gray-500 text-sm font-medium">Certificates Issued</h3>
-          <p className="text-3xl font-bold">{stats.certificates}</p>
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
+          <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">Total Active Events</h3>
+          <p className="text-4xl font-extrabold text-indigo-600 mt-2">{stats.totalEvents}</p>
         </div>
       </div>
 
