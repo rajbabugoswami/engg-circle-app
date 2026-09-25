@@ -5,13 +5,7 @@ import axios from 'axios';
 const JoinQuiz = () => {
   const [formData, setFormData] = useState({
     quizCode: '',
-    name: '',
     email: '',
-    phone: '',
-    college: '',
-    course: '',
-    year: '',
-    roll_number: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,9 +25,8 @@ const JoinQuiz = () => {
         participantId: res.data.participantId,
         eventId: res.data.eventId,
         quizCode: res.data.quizCode,
-        name: formData.name
+        name: res.data.name
       }));
-      alert('Registration Successful! Please check your email for the confirmation details.');
       navigate('/quiz');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to join quiz');
@@ -53,9 +46,9 @@ const JoinQuiz = () => {
         <div className="glass-dark p-8 rounded-2xl shadow-2xl">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-              Student Registration
+              Join Live Quiz
             </h2>
-            <p className="text-gray-400 mt-2">Enter your details to register and join the event</p>
+            <p className="text-gray-400 mt-2">Enter your registered email and quiz code to join the arena</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -70,41 +63,19 @@ const JoinQuiz = () => {
                 className="w-full px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
                 placeholder="Event / Quiz Code" />
                 
-              <input type="text" name="name" required value={formData.name} onChange={handleChange} 
-                className="w-full px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
-                placeholder="Full Name" />
-                
               <input type="email" name="email" required value={formData.email} onChange={handleChange} 
                 className="w-full px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
-                placeholder="Email Address" />
-                
-              <input type="tel" name="phone" required value={formData.phone} onChange={handleChange} 
-                className="w-full px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
-                placeholder="Mobile Number" />
-
-              <input type="text" name="college" required value={formData.college} onChange={handleChange} 
-                className="w-full px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
-                placeholder="College / Institute Name" />
-
-              <div className="flex gap-4">
-                <input type="text" name="course" required value={formData.course} onChange={handleChange} 
-                  className="w-1/2 px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
-                  placeholder="Course / Branch" />
-                  
-                <input type="text" name="year" required value={formData.year} onChange={handleChange} 
-                  className="w-1/2 px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
-                  placeholder="Year / Semester" />
-              </div>
-
-              <input type="text" name="roll_number" value={formData.roll_number} onChange={handleChange} 
-                className="w-full px-4 py-3 bg-white text-gray-900 border-0 rounded-xl focus:ring-4 focus:ring-purple-500/50 transition-shadow font-medium shadow-inner" 
-                placeholder="Roll Number (Optional)" />
+                placeholder="Registered Email Address" />
             </div>
 
             <button type="submit" disabled={loading}
               className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-bold text-lg shadow-lg hover:shadow-purple-500/50 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:transform-none">
-              {loading ? 'Registering...' : 'Register & Enter Waiting Room'}
+              {loading ? 'Authenticating...' : 'Enter Arena'}
             </button>
+            
+            <p className="text-center text-gray-400 mt-4 text-sm">
+              Not registered yet? <Link to={`/register${formData.quizCode ? `?quizCode=${formData.quizCode}` : ''}`} className="text-purple-400 hover:text-purple-300 underline">Register here</Link>
+            </p>
           </form>
         </div>
       </div>

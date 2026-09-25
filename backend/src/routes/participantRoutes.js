@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { joinQuiz } = require('../controllers/participantController');
+const { joinQuiz, register } = require('../controllers/participantController');
 
+router.post('/register', register);
 router.post('/join', joinQuiz);
 
 module.exports = router;
