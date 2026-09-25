@@ -238,9 +238,9 @@ const resendCertificate = async (req, res) => {
 const resendAllFailed = async (req, res) => {
   try {
     const { eventId } = req.params;
-    const [certs] = await pool.query("SELECT certificate_id FROM certificates WHERE event_id = ? AND email_status = 'FAILED'", [eventId]);
+    const [certs] = await pool.query("SELECT certificate_id FROM certificates WHERE event_id = ? AND email_status IN ('FAILED', 'PENDING')", [eventId]);
     
-    res.json({ message: 'Resend triggered for failed emails. They will process in the background.' });
+    res.json({ message: 'Resend triggered for failed/pending emails. They will process in the background.' });
     
     for (let c of certs) {
       try {
