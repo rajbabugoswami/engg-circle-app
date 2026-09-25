@@ -81,6 +81,36 @@ const CertificateDashboard = () => {
     }
   };
 
+  const handleGenerateAll = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/certificates/generate-all/${eventId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert('Generation and sending started in the background. Please refresh after a minute.');
+    } catch (err) {
+      alert('Failed to start bulk generation');
+    }
+  };
+
+  const handleGenerateSingle = async (participantId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/certificates/generate`, { eventId, participantId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.certificateId && event.auto_email_enabled) {
+         await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/certificates/send`, { certificateId: res.data.certificateId }, {
+           headers: { Authorization: `Bearer ${token}` }
+         });
+      }
+      alert('Certificate generated (and sent if auto-email is ON)!');
+      fetchData();
+    } catch (err) {
+      alert('Failed to generate or send');
+    }
+  };
+
   const exportToExcel = () => {
     import('xlsx').then((XLSX) => {
       const worksheet = XLSX.utils.json_to_sheet(
@@ -186,9 +216,12 @@ const CertificateDashboard = () => {
 
         {/* Results/Certificates Table */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
             <h2 className="text-xl font-bold">Participants & Certificates</h2>
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
+              <button onClick={handleGenerateAll} className="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">
+                GENERATE & SEND ALL
+              </button>
               <button onClick={() => {
                 const token = localStorage.getItem('adminToken');
                 window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/certificates/zip/${eventId}?token=${token}`, '_blank');
@@ -225,7 +258,7 @@ const CertificateDashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{r.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-500">{r.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="font-bold">#{idx + 1}</span> ({r.score} pts)
+                      <span className="font-bold">#{r.rank_pos || idx + 1}</span> ({r.score} pts)
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">{r.certificate_id || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -235,11 +268,13 @@ const CertificateDashboard = () => {
                       {!r.email_status && <span className="text-gray-400">Not Generated</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      {r.pdf_url && (
+                      {r.pdf_url ? (
                         <>
                           <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${r.pdf_url}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:text-indigo-900 mr-4">View</a>
                           <button onClick={() => handleResend(r.id)} className="text-orange-600 hover:text-orange-900">Resend</button>
                         </>
+                      ) : (
+                        <button onClick={() => handleGenerateSingle(r.id)} className="text-green-600 hover:text-green-900 font-bold">Generate</button>
                       )}
                     </td>
                   </tr>

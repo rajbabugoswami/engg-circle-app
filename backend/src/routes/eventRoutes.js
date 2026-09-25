@@ -40,4 +40,6 @@ router.put('/:eventId/template-config', require('../controllers/eventController'
 router.route('/:eventId/results')
   .get(getResults);
 
+router.get('/:eventId/participants', require('../controllers/eventController').getParticipants);
+
 module.exports = router;

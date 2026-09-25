@@ -13,6 +13,8 @@ const LiveControl = () => {
   const [currentQIndex, setCurrentQIndex] = useState(-1);
   const [quizState, setQuizState] = useState('PENDING'); // PENDING, LIVE, QUESTION_ACTIVE, LEADERBOARD, COMPLETED, PRESENTATION
   const [participantsCount, setParticipantsCount] = useState(0);
+  const [participants, setParticipants] = useState([]);
+  const [connectedIds, setConnectedIds] = useState(new Set());
   const [answersCount, setAnswersCount] = useState({ A: 0, B: 0, C: 0, D: 0 });
   const [timeLeft, setTimeLeft] = useState(0);
   const [presentationUrl, setPresentationUrl] = useState(null);
@@ -30,6 +32,9 @@ const LiveControl = () => {
       const resQ = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${id}/questions`, { headers: { Authorization: `Bearer ${token}` } });
       setQuestions(resQ.data);
 
+      const resP = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${id}/participants`, { headers: { Authorization: `Bearer ${token}` } });
+      setParticipants(resP.data);
+
       try {
         const resPres = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${id}/presentation`, { headers: { Authorization: `Bearer ${token}` } });
         setPresentationUrl(resPres.data.fileUrl);
@@ -37,8 +42,9 @@ const LiveControl = () => {
 
       socket.emit('admin_join', { quizCode: resEvent.data.quiz_code });
 
-      socket.on('participant_joined', () => {
-        setParticipantsCount(prev => prev + 1);
+      socket.on('participant_update', ({ connectedList }) => {
+        setConnectedIds(new Set(connectedList));
+        setParticipantsCount(connectedList.length);
       });
 
       socket.on('answer_received', (data) => {
@@ -160,6 +166,10 @@ const LiveControl = () => {
                   <h2 className="text-xl font-bold text-gray-500">Question {currentQIndex + 1} of {questions.length}</h2>
                   <span className="text-2xl font-bold text-red-600">{timeLeft}s remaining</span>
                 </div>
+                <div className="mb-4 flex gap-4">
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Answered: {Object.values(answersCount).reduce((a, b) => a + b, 0)} / {participantsCount}</span>
+                  <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-bold">Not Answered: {Math.max(0, participantsCount - Object.values(answersCount).reduce((a, b) => a + b, 0))}</span>
+                </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">{questions[currentQIndex].question_text}</h3>
                 
                 {questions[currentQIndex].image_url && (
@@ -180,9 +190,17 @@ const LiveControl = () => {
             )}
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white p-6 rounded-lg shadow flex flex-col h-full max-h-[800px]">
             <h3 className="text-lg font-bold border-b pb-2 mb-4">Live Stats</h3>
             <div className="space-y-4">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Total Registered:</span>
+                <span className="font-bold">{participants.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Connected:</span>
+                <span className="font-bold text-green-600">{participantsCount} / {participants.length}</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Total Answers:</span>
                 <span className="font-bold">{Object.values(answersCount).reduce((a, b) => a + b, 0)}</span>
@@ -193,7 +211,21 @@ const LiveControl = () => {
               </div>
             </div>
 
-            <div className="mt-12 border-t pt-4">
+            <div className="mt-6 border-t pt-4 flex-1 overflow-y-auto">
+               <h4 className="text-sm font-bold text-gray-500 mb-3 sticky top-0 bg-white pb-2">Participant List</h4>
+               <ul className="space-y-2">
+                 {participants.map(p => (
+                   <li key={p.id} className="flex justify-between items-center text-sm border-b pb-1">
+                     <span className="font-medium text-gray-700 truncate mr-2" title={p.name}>{p.name}</span>
+                     {connectedIds.has(p.id) 
+                       ? <span className="text-xs text-green-600 whitespace-nowrap">🟢 Connected</span> 
+                       : <span className="text-xs text-gray-400 whitespace-nowrap">⚪ Not Joined</span>}
+                   </li>
+                 ))}
+               </ul>
+            </div>
+
+            <div className="mt-4 border-t pt-4">
               <button onClick={endQuiz} className="w-full bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded font-bold transition-colors">
                 END QUIZ
               </button>

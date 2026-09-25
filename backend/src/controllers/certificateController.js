@@ -18,10 +18,16 @@ const generateCertificate = async (req, res) => {
       WHERE p.id = ? AND e.id = ?
     `, [participantId, eventId]);
 
+    const [existingCert] = await pool.query('SELECT certificate_id, pdf_url FROM certificates WHERE participant_id = ? AND event_id = ?', [participantId, eventId]);
+    if (existingCert.length > 0) {
+      return res.json({ message: 'Certificate already exists', certificateId: existingCert[0].certificate_id, url: existingCert[0].pdf_url });
+    }
+
     if (pRows.length === 0) return res.status(404).json({ message: 'Participant not found' });
     const data = pRows[0];
 
-    const certId = `CERT-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const eventNamePrefix = data.event_name.toUpperCase().replace(/[^A-Z0-9]/g, '').substring(0, 10);
+    const certId = `CERT-${eventNamePrefix}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
     // Create a new PDF document
     const pdfDoc = await PDFDocument.create();
@@ -234,7 +240,14 @@ const triggerBulkCertificateGeneration = async (eventId) => {
     const rankLimit = events[0].certificate_rank_limit || 3;
 
     // Fetch all participants to calculate ranks
-    const [participants] = await pool.query('SELECT id, score FROM participants WHERE event_id = ? ORDER BY score DESC, joined_at ASC', [eventId]);
+    const [participants] = await pool.query(`
+      SELECT p.id, p.score, COALESCE(SUM(a.time_taken), 0) as total_time 
+      FROM participants p 
+      LEFT JOIN answers a ON p.id = a.participant_id
+      WHERE p.event_id = ? 
+      GROUP BY p.id
+      ORDER BY p.score DESC, total_time ASC, p.joined_at ASC
+    `, [eventId]);
     
     // Assign and save ranks, only process up to rankLimit
     for (let i = 0; i < participants.length; i++) {

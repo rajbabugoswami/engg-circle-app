@@ -57,11 +57,14 @@ const getResults = async (req, res) => {
     if (events.length === 0) return res.status(403).json({ message: 'Unauthorized' });
 
     const [results] = await pool.query(`
-      SELECT p.id, p.name, p.email, p.score, c.certificate_id, c.pdf_url, c.email_status 
+      SELECT p.id, p.name, p.email, p.score, p.rank_pos, c.certificate_id, c.pdf_url, c.email_status,
+             COALESCE(SUM(a.time_taken), 0) as total_time
       FROM participants p 
       LEFT JOIN certificates c ON p.id = c.participant_id
+      LEFT JOIN answers a ON p.id = a.participant_id
       WHERE p.event_id = ? 
-      ORDER BY p.score DESC, p.joined_at ASC
+      GROUP BY p.id, c.certificate_id, c.pdf_url, c.email_status
+      ORDER BY p.score DESC, total_time ASC, p.joined_at ASC
     `, [eventId]);
     
     res.json({ eventName: events[0].name, results });
@@ -100,4 +103,14 @@ const saveTemplateConfig = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, getResults, uploadTemplate, saveTemplateConfig };
+const getParticipants = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const [rows] = await pool.query('SELECT id, name, email, joined_at FROM participants WHERE event_id = ? ORDER BY joined_at DESC', [eventId]);
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, getResults, uploadTemplate, saveTemplateConfig, getParticipants };
