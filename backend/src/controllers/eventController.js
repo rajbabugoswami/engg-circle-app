@@ -37,8 +37,20 @@ const createEvent = async (req, res) => {
 };
 
 const updateEvent = async (req, res) => {
-  // Implementation...
-  res.json({ message: 'Updated' });
+  try {
+    const { id } = req.params;
+    const { cert_generation_enabled, auto_email_enabled, certificate_rank_limit } = req.body;
+    
+    await pool.query(
+      'UPDATE events SET cert_generation_enabled = ?, auto_email_enabled = ?, certificate_rank_limit = ? WHERE id = ? AND admin_id = ?',
+      [cert_generation_enabled, auto_email_enabled, certificate_rank_limit, id, req.admin.id]
+    );
+    
+    res.json({ message: 'Event settings updated successfully' });
+  } catch (error) {
+    console.error('Update event error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 const deleteEvent = async (req, res) => {

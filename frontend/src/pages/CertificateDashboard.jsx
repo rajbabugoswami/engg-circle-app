@@ -157,6 +157,25 @@ const CertificateDashboard = () => {
     });
   };
 
+  const toggleSetting = async (field, value) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const updatedEvent = { ...event, [field]: value };
+      
+      await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}`, {
+        cert_generation_enabled: updatedEvent.cert_generation_enabled,
+        auto_email_enabled: updatedEvent.auto_email_enabled,
+        certificate_rank_limit: updatedEvent.certificate_rank_limit
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setEvent(updatedEvent);
+    } catch (err) {
+      alert('Failed to update setting');
+    }
+  };
+
   if (!event) return <div>Loading...</div>;
 
   return (
@@ -191,9 +210,39 @@ const CertificateDashboard = () => {
               </form>
               
               <div className="mt-6 p-4 bg-gray-100 rounded">
-                <h4 className="font-bold mb-2">Current Settings:</h4>
-                <p>Auto-Generate Certificates: <span className="font-bold text-indigo-600">{event.cert_generation_enabled ? 'ON' : 'OFF'}</span></p>
-                <p>Auto-Email Delivery: <span className="font-bold text-indigo-600">{event.auto_email_enabled ? 'ON' : 'OFF'}</span></p>
+                <h4 className="font-bold mb-4">Automatic Settings</h4>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-gray-700 font-medium">Auto-Generate Certificates at end of quiz</span>
+                  <button 
+                    onClick={() => toggleSetting('cert_generation_enabled', !event.cert_generation_enabled)}
+                    className={`px-3 py-1 rounded font-bold text-xs ${event.cert_generation_enabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}
+                  >
+                    {event.cert_generation_enabled ? 'ON (Click to Disable)' : 'OFF (Click to Enable)'}
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-gray-700 font-medium">Auto-Email Certificates immediately</span>
+                  <button 
+                    onClick={() => toggleSetting('auto_email_enabled', !event.auto_email_enabled)}
+                    className={`px-3 py-1 rounded font-bold text-xs ${event.auto_email_enabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}
+                  >
+                    {event.auto_email_enabled ? 'ON (Click to Disable)' : 'OFF (Click to Enable)'}
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-between mt-4">
+                  <span className="text-gray-700 font-medium">Rank Limit (0 for ALL participants)</span>
+                  <input 
+                    type="number" 
+                    min="0"
+                    value={event.certificate_rank_limit || 0}
+                    onChange={(e) => toggleSetting('certificate_rank_limit', parseInt(e.target.value) || 0)}
+                    className="w-20 px-2 py-1 border rounded text-center"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Example: 3 means only Top 3 get certificates. 0 means everyone gets a certificate.</p>
               </div>
             </div>
             

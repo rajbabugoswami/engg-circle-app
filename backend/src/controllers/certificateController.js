@@ -249,7 +249,9 @@ const triggerBulkCertificateGeneration = async (eventId) => {
     const [events] = await pool.query('SELECT cert_generation_enabled, auto_email_enabled, certificate_rank_limit FROM events WHERE id = ?', [eventId]);
     if (events.length === 0 || !events[0].cert_generation_enabled) return;
     const autoEmail = events[0].auto_email_enabled;
-    const rankLimit = events[0].certificate_rank_limit || 3;
+    const rankLimit = events[0].certificate_rank_limit !== null && events[0].certificate_rank_limit !== undefined 
+      ? events[0].certificate_rank_limit 
+      : 3;
 
     const [participants] = await pool.query(`
       SELECT p.id, p.score, COALESCE(SUM(a.time_taken), 0) as total_time 
@@ -266,7 +268,7 @@ const triggerBulkCertificateGeneration = async (eventId) => {
       
       await pool.query('UPDATE participants SET rank_pos = ? WHERE id = ?', [rank, p.id]);
       
-      if (rank <= rankLimit) {
+      if (rankLimit === 0 || rank <= rankLimit) {
         const req = { body: { eventId, participantId: p.id } };
         let generatedCertId = null;
         
