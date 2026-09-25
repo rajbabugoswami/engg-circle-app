@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getEvents, getEvent, createEvent, updateEvent, deleteEvent, getResults, uploadTemplate } = require('../controllers/eventController');
-const { getQuestions, addQuestion } = require('../controllers/questionController');
+const { getQuestions, addQuestion, generateQuestionsWithAI } = require('../controllers/questionController');
 const { protect } = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
@@ -31,6 +31,8 @@ router.route('/:id')
   .delete(deleteEvent);
 
 router.post('/:id/duplicate', require('../controllers/eventController').duplicateEvent);
+
+router.post('/:eventId/questions/ai-generate', generateQuestionsWithAI);
 
 router.route('/:eventId/questions')
   .get(getQuestions)

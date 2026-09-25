@@ -17,6 +17,12 @@ const QuestionManagement = () => {
   });
   const [imageFile, setImageFile] = useState(null);
 
+  // AI Generator state
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiCount, setAiCount] = useState(5);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
+
   useEffect(() => {
     fetchQuestions();
   }, [eventId]);
@@ -57,12 +63,67 @@ const QuestionManagement = () => {
     }
   };
 
+  const handleAIGenerate = async (e) => {
+    e.preventDefault();
+    if (!aiPrompt) return;
+    setIsAiLoading(true);
+    setAiError('');
+    try {
+      const token = localStorage.getItem('adminToken');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/questions/ai-generate`, {
+        prompt: aiPrompt,
+        count: aiCount,
+        marks: newQuestion.marks,
+        timeLimit: newQuestion.time_limit
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert(res.data.message);
+      setAiPrompt('');
+      fetchQuestions();
+    } catch (error) {
+      setAiError(error.response?.data?.message || 'Failed to generate questions with AI.');
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Manage Questions</h1>
           <Link to="/admin/dashboard" className="text-indigo-600 hover:underline">Back to Dashboard</Link>
+        </div>
+
+        {/* AI Auto Generator Block */}
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-lg shadow-lg mb-8 text-white">
+          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+            ✨ Generate with Google Gemini AI
+          </h2>
+          <p className="mb-4 text-purple-100 text-sm">Describe the topic, and AI will automatically create multiple choice questions and add them to your bank.</p>
+          
+          <form onSubmit={handleAIGenerate} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-purple-100 mb-1">Topic or Instructions (e.g., "10 hard questions on React hooks")</label>
+              <textarea required className="w-full border-none rounded p-3 text-gray-900" rows="2"
+                placeholder="Topic..."
+                value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}></textarea>
+            </div>
+            
+            <div className="flex gap-4 items-end">
+              <div className="w-32">
+                <label className="block text-sm font-medium text-purple-100 mb-1">No. of Questions</label>
+                <input type="number" min="1" max="50" required className="w-full border-none rounded p-2 text-gray-900"
+                  value={aiCount} onChange={e => setAiCount(parseInt(e.target.value))} />
+              </div>
+              <button type="submit" disabled={isAiLoading}
+                className="bg-white text-purple-700 px-6 py-2 rounded font-bold hover:bg-gray-100 disabled:opacity-50 flex items-center gap-2 h-10">
+                {isAiLoading ? '🤖 Thinking & Generating...' : 'Generate Questions'}
+              </button>
+            </div>
+            {aiError && <div className="text-red-200 text-sm bg-red-900/30 p-2 rounded">{aiError}</div>}
+          </form>
         </div>
 
         {/* Add Question Form */}
