@@ -129,26 +129,26 @@ const QuizInterface = () => {
         )}
 
         {quizState === 'WAITING_FOR_QUESTION' && (
-          <div className="text-center">
+          <div className="text-center text-white">
             <h2 className="text-xl font-bold mb-2">Quiz is LIVE!</h2>
-            <p className="text-gray-600">Get ready for the first question...</p>
+            <p className="text-gray-300">Get ready for the first question...</p>
           </div>
         )}
 
         {quizState === 'ACTIVE' && currentQuestion && (
           <div>
             <div className="flex justify-between items-center mb-6">
-              <span className="text-sm font-bold text-gray-500">Q. {currentQuestion.order_num}</span>
-              <span className={`text-xl font-bold ${timeLeft <= 5 ? 'text-red-600' : 'text-indigo-600'}`}>
+              <span className="text-sm font-bold text-gray-400">Q. {currentQuestion.order_num}</span>
+              <span className={`text-xl font-bold ${timeLeft <= 5 ? 'text-red-400 animate-pulse' : 'text-indigo-400'}`}>
                 {timeLeft}s
               </span>
             </div>
             
-            <h2 className="text-2xl font-bold mb-6">{currentQuestion.question_text}</h2>
+            <h2 className="text-2xl font-bold mb-6 text-white">{currentQuestion.question_text}</h2>
             
             {currentQuestion.image_url && (
               <div className="mb-6 flex justify-center">
-                <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${currentQuestion.image_url}`} alt="Question visual" className="max-h-48 rounded-lg shadow-md border border-gray-200" />
+                <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${currentQuestion.image_url}`} alt="Question visual" className="max-h-48 rounded-lg shadow-md border border-gray-600" />
               </div>
             )}
             
@@ -161,11 +161,11 @@ const QuizInterface = () => {
                     key={opt}
                     onClick={() => !submitted && setSelectedAnswer(opt)}
                     className={`p-4 text-left border rounded-lg transition-colors ${
-                      selectedAnswer === opt ? 'bg-indigo-600 text-white border-indigo-600' : 
-                      submitted ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-white hover:bg-indigo-50 border-gray-300'
+                      selectedAnswer === opt ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg' : 
+                      submitted ? 'bg-gray-800 text-gray-500 border-gray-700' : 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700'
                     }`}
                   >
-                    <span className="font-bold mr-2">{opt}.</span> {currentQuestion[optKey]}
+                    <span className="font-bold mr-2 text-indigo-400">{opt}.</span> {currentQuestion[optKey]}
                   </button>
                 );
               })}
@@ -175,7 +175,7 @@ const QuizInterface = () => {
               onClick={submitAnswer}
               disabled={!selectedAnswer || submitted}
               className={`w-full py-3 rounded-lg font-bold text-white transition-colors ${
-                !selectedAnswer || submitted ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'
+                !selectedAnswer || submitted ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 shadow-lg'
               }`}
             >
               {submitted ? 'Answer Submitted' : 'Submit Answer'}
@@ -184,19 +184,19 @@ const QuizInterface = () => {
         )}
 
         {quizState === 'LEADERBOARD' && (
-          <div className="text-center">
+          <div className="text-center text-white">
             <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
             {leaderboard.length > 0 ? (
               <div className="space-y-2">
                 {leaderboard.slice(0, 5).map((l, i) => (
-                  <div key={i} className={`p-3 rounded-md flex justify-between ${l.participantId === session.participantId ? 'bg-indigo-100 font-bold border border-indigo-300' : 'bg-gray-50'}`}>
+                  <div key={i} className={`p-3 rounded-md flex justify-between ${l.participantId === session.participantId ? 'bg-indigo-900 font-bold border border-indigo-400 text-white' : 'bg-gray-800 border border-gray-700 text-gray-300'}`}>
                     <span>{i + 1}. {l.name}</span>
                     <span>{l.score} pts</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">Calculating scores... Get ready for the next question!</p>
+              <p className="text-gray-400">Calculating scores... Get ready for the next question!</p>
             )}
           </div>
         )}
