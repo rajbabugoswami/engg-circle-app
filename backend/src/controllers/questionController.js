@@ -60,13 +60,29 @@ Each object must have these exact keys:
 "option_d": Fourth option string.
 "correct_option": The correct option strictly as one of: "A", "B", "C", "D".`;
 
-    const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents: systemInstruction,
-        config: {
-            responseMimeType: "application/json",
+    let response;
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        response = await ai.models.generateContent({
+            model: 'gemini-1.5-flash',
+            contents: systemInstruction,
+            config: {
+                responseMimeType: "application/json",
+            }
+        });
+        break;
+      } catch (err) {
+        if (err.message && (err.message.includes('503') || err.message.includes('429'))) {
+          retries--;
+          if (retries === 0) throw err;
+          console.log(`503/429 received, retrying in 3 seconds... (${retries} retries left)`);
+          await new Promise(res => setTimeout(res, 3000));
+        } else {
+          throw err;
         }
-    });
+      }
+    }
     
     let rawText = response.text.trim();
     if (rawText.startsWith('```')) {
