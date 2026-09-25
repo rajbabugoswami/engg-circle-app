@@ -14,6 +14,7 @@ const triggerBulk = async (req, res) => {
 };
 
 router.get('/verify/:certificateId', verifyCertificate);
+router.get('/download/:certificateId', require('../controllers/certificateController').downloadCertificate);
 router.post('/generate', protect, generateCertificate);
 router.post('/send', protect, sendCertificateEmail);
 router.post('/resend/:participantId', protect, resendCertificate);
