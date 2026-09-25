@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 const Home = () => {
   return (
     <div className="min-h-screen bg-[#0b1320] flex flex-col font-sans text-white relative overflow-hidden">
-      {/* Animated background blobs matching logo colors */}
-      <div className="absolute inset-0 opacity-10 bg-center bg-no-repeat bg-contain" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
+      {/* Background logo - glowing circle like the navbar logo */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] opacity-10 bg-center bg-no-repeat bg-cover rounded-full shadow-[0_0_50px_rgba(59,130,246,0.5)] border-4 border-blue-400/30" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
       <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#2a9df4] rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
       <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-400 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-4000"></div>
