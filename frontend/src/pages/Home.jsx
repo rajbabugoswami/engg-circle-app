@@ -11,7 +11,7 @@ const Home = () => {
       <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-400 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-4000"></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/20 rounded-full mix-blend-screen filter blur-[120px] opacity-60 pointer-events-none"></div>
 
-      <header className="relative z-10 glass-dark">
+      <header className="relative z-10 pt-2 md:pt-4">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4">
           <div className="flex items-center justify-center">
             <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-10 w-10 md:h-14 md:w-14 rounded-full object-cover shadow-[0_0_15px_rgba(59,130,246,0.3)] border-2 border-blue-400/30" />
