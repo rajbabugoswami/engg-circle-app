@@ -26,7 +26,7 @@ const Home = () => {
       </header>
 
       <main className="flex-grow flex items-center justify-center relative z-10 p-4">
-        <div className="text-center p-8 md:p-16 max-w-4xl mx-auto bg-white/5 backdrop-blur-xl rounded-[2.5rem] shadow-[0_0_30px_rgba(59,130,246,0.2)] border border-blue-400/30">
+        <div className="text-center px-6 max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
             Talk. Build. <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2a9df4] to-blue-300">Innovate.</span>
