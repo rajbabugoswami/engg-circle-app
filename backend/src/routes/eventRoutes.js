@@ -39,6 +39,7 @@ router.route('/:eventId/questions')
   .post(upload.single('image'), addQuestion);
 
 router.post('/:eventId/template', upload.single('template'), uploadTemplate);
+router.post('/:eventId/template/ai-generate', require('../controllers/eventController').generateTemplateWithAI);
 router.put('/:eventId/template-config', require('../controllers/eventController').saveTemplateConfig);
 
 router.route('/:eventId/results')

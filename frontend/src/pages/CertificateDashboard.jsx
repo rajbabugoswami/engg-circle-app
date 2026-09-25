@@ -8,6 +8,8 @@ const CertificateDashboard = () => {
   const [results, setResults] = useState([]);
   const [templateFile, setTemplateFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [aiTemplatePrompt, setAiTemplatePrompt] = useState('');
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -51,6 +53,26 @@ const CertificateDashboard = () => {
     } finally {
       setUploading(false);
       setTemplateFile(null);
+    }
+  };
+
+  const handleAITemplate = async (e) => {
+    e.preventDefault();
+    if (!aiTemplatePrompt) return;
+    setIsAiGenerating(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/template/ai-generate`, 
+      { prompt: aiTemplatePrompt },
+      { headers: { Authorization: `Bearer ${token}` } });
+      
+      alert('AI Template Generated and applied successfully!');
+      setAiTemplatePrompt('');
+      fetchData(); // Refresh to get new template URL
+    } catch (err) {
+      alert(`AI Generation failed: ${err.response?.data?.error || err.response?.data?.message || err.message}`);
+    } finally {
+      setIsAiGenerating(false);
     }
   };
 
@@ -213,6 +235,19 @@ const CertificateDashboard = () => {
                   {uploading ? 'Uploading...' : 'Save Template'}
                 </button>
               </form>
+
+              <div className="mt-6 p-4 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-white">
+                <h4 className="font-bold mb-2 flex items-center gap-2">✨ Or Generate with AI</h4>
+                <form onSubmit={handleAITemplate} className="space-y-3">
+                  <textarea required className="w-full border-none rounded p-2 text-gray-900 text-sm" rows="2"
+                    placeholder="E.g., A premium cyber security event certificate background with dark blue and gold borders"
+                    value={aiTemplatePrompt} onChange={e => setAiTemplatePrompt(e.target.value)}></textarea>
+                  <button type="submit" disabled={isAiGenerating}
+                    className="bg-white text-purple-700 px-4 py-2 rounded font-bold hover:bg-gray-100 disabled:opacity-50 text-sm">
+                    {isAiGenerating ? '🤖 Generating...' : 'Generate Template'}
+                  </button>
+                </form>
+              </div>
               
               <div className="mt-6 p-4 bg-gray-100 rounded">
                 <h4 className="font-bold mb-4">Automatic Settings</h4>

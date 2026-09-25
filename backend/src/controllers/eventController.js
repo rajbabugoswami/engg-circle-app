@@ -155,4 +155,53 @@ const getParticipants = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, duplicateEvent, getResults, uploadTemplate, saveTemplateConfig, getParticipants };
+const generateTemplateWithAI = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { prompt } = req.body;
+    
+    const [events] = await pool.query('SELECT id FROM events WHERE id = ? AND admin_id = ?', [eventId, req.admin.id]);
+    if (events.length === 0) return res.status(403).json({ message: 'Unauthorized' });
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(400).json({ message: 'GEMINI_API_KEY not configured on server' });
+    }
+
+    const { GoogleGenAI } = require('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+    const response = await ai.models.generateImages({
+       model: 'imagen-3.0-generate-001',
+       prompt: prompt,
+       config: {
+         numberOfImages: 1,
+         aspectRatio: "4:3"
+       }
+    });
+
+    const base64Image = response?.generatedImages?.[0]?.image?.imageBytes;
+    if (!base64Image) {
+        throw new Error('No image returned by AI');
+    }
+
+    const fs = require('fs');
+    const path = require('path');
+    const filename = `cert-template-ai-${Date.now()}.png`;
+    const dir = path.join(__dirname, '../../uploads/questions');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    
+    fs.writeFileSync(path.join(dir, filename), Buffer.from(base64Image, 'base64'));
+    
+    const imageUrl = `/uploads/questions/${filename}`;
+    
+    await pool.query('UPDATE events SET cert_template_url = ? WHERE id = ?', [imageUrl, eventId]);
+    
+    res.json({ message: 'AI Template Generated Successfully', url: imageUrl });
+
+  } catch(error) {
+     console.error('AI Template Gen Error:', error);
+     res.status(500).json({ message: 'Failed to generate template.', error: error.message });
+  }
+};
+
+module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, duplicateEvent, getResults, uploadTemplate, saveTemplateConfig, getParticipants, generateTemplateWithAI };
