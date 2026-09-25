@@ -28,9 +28,9 @@ const Home = () => {
         </div>
       </header>
 
-      <main className="flex-grow flex items-center justify-center relative z-10 p-4">
-        <div className="text-center px-6 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8">
+      <main className="flex-grow flex items-center justify-center relative z-10 p-4 md:p-8">
+        <div className="text-center py-12 px-6 md:py-20 md:px-24 max-w-5xl mx-auto bg-white/5 backdrop-blur-lg rounded-[3rem] md:rounded-full shadow-[0_0_40px_rgba(59,130,246,0.3)] border-2 border-blue-400/30 flex flex-col justify-center items-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 mt-4">
             Talk. Build. <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2a9df4] to-blue-300">Innovate.</span>
           </h1>
