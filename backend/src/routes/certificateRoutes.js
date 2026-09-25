@@ -1,0 +1,16 @@
+const express = require('express');
+const router = express.Router();
+const { generateCertificate, verifyCertificate, sendCertificateEmail, resendCertificate, resendAllFailed } = require('../controllers/certificateController');
+const { protect } = require('../middleware/auth');
+const multer = require('multer');
+
+// Configure multer for template uploads if needed later
+const upload = multer({ dest: 'uploads/' });
+
+router.get('/verify/:certificateId', verifyCertificate);
+router.post('/generate', protect, generateCertificate);
+router.post('/send', protect, sendCertificateEmail);
+router.post('/resend/:participantId', protect, resendCertificate);
+router.post('/resend-all-failed/:eventId', protect, resendAllFailed);
+
+module.exports = router;
