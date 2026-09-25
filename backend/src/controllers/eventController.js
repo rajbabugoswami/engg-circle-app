@@ -25,8 +25,8 @@ const createEvent = async (req, res) => {
     const quiz_code = `QUIZ-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     
     const [result] = await pool.query(
-      `INSERT INTO events (admin_id, quiz_code, name, description, event_date, start_time, duration, default_time, max_participants, marks_per_q, negative_marks, cert_generation_enabled, auto_email_enabled)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO events (admin_id, quiz_code, name, description, event_date, start_time, duration, default_time, max_participants, marks_per_q, negative_marks, cert_generation_enabled, auto_email_enabled, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TRUE)`,
       [req.admin.id, quiz_code, name, description, event_date, start_time, duration, default_time, max_participants, marks_per_q, negative_marks, cert_generation_enabled !== false, auto_email_enabled !== false]
     );
     

@@ -7,7 +7,6 @@ const CreateEvent = () => {
     name: '',
     description: '',
     event_date: '',
-    start_time: '',
     duration: 60,
     default_time: 30,
     max_participants: 100,
@@ -58,11 +57,7 @@ const CreateEvent = () => {
             <textarea name="description" rows="3" onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Start Time</label>
-              <input type="time" name="start_time" required onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">Duration (mins)</label>
               <input type="number" name="duration" value={formData.duration} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
