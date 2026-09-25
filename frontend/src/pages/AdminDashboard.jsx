@@ -94,6 +94,8 @@ const AdminDashboard = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
                   <Link to={`/admin/events/${event.id}/questions`} className="text-indigo-600 hover:text-indigo-900">Questions</Link>
                   <Link to={`/admin/events/${event.id}/presentation`} className="text-indigo-600 hover:text-indigo-900">Presentation</Link>
+                  <Link to={`/admin/events/${event.id}/certificate-editor`} className="text-blue-600 hover:text-blue-900">Cert Template</Link>
+                  <Link to={`/admin/events/${event.id}/certificates`} className="text-purple-600 hover:text-purple-900">Certificates</Link>
                   {event.status !== 'COMPLETED' && <Link to={`/admin/live/${event.id}`} className="text-green-600 hover:text-green-900 font-bold">START</Link>}
                   
                   <button onClick={() => handleDuplicate(event.id)} className="text-orange-600 hover:text-orange-900 ml-4 font-semibold">Copy</button>
