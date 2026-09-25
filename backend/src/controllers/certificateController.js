@@ -226,15 +226,25 @@ const resendAllFailed = async (req, res) => {
     const { eventId } = req.params;
     const [certs] = await pool.query("SELECT certificate_id FROM certificates WHERE event_id = ? AND email_status = 'FAILED'", [eventId]);
     
-    // In a real app we'd queue these, but for now we'll trigger them sequentially
+    res.json({ message: 'Resend triggered for failed emails. They will process in the background.' });
+    
+    // Process in background
     for (let c of certs) {
-      // Very simplified resend loop (ignoring individual responses)
-      // Ideally, a background job handles this
-      pool.query("UPDATE certificates SET email_status = 'PENDING' WHERE certificate_id = ?", [c.certificate_id]);
+      try {
+        await pool.query("UPDATE certificates SET email_status = 'PENDING' WHERE certificate_id = ?", [c.certificate_id]);
+        
+        const mockReq = { body: { certificateId: c.certificate_id } };
+        const mockRes = { json: () => {}, status: () => mockRes };
+        await sendCertificateEmail(mockReq, mockRes);
+      } catch (err) {
+        console.error('Error resending cert:', c.certificate_id, err);
+      }
     }
-    res.json({ message: 'Resend triggered for failed emails' });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error(error);
+    if (!res.headersSent) {
+      res.status(500).json({ message: 'Server error' });
+    }
   }
 };
 

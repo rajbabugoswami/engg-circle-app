@@ -1,4 +1,3 @@
-USE quizlive;
 
 -- Password is 'password123' (bcrypt hashed)
 INSERT INTO admins (name, email, password) VALUES 
