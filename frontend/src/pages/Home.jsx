@@ -16,11 +16,14 @@ const Home = () => {
           <div className="flex items-center justify-center">
             <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-10 w-10 md:h-14 md:w-14 rounded-full object-cover shadow-[0_0_15px_rgba(59,130,246,0.3)] border-2 border-blue-400/30" />
           </div>
-          <nav className="flex flex-row flex-wrap justify-center gap-1 md:gap-2 items-center w-full md:w-auto mt-3 md:mt-0">
-            <Link to="/join" className="px-2 py-1 md:px-4 md:py-2 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-xs md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Join Quiz</Link>
-            <Link to="/student/dashboard" className="px-2 py-1 md:px-4 md:py-2 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-xs md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">My Events</Link>
-            <Link to="/verify-certificate" className="px-2 py-1 md:px-4 md:py-2 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 text-gray-200 hover:text-white text-xs md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Verify</Link>
-            <Link to="/admin" className="px-2 py-1 md:px-4 md:py-2 bg-purple-500/10 rounded-full border border-transparent hover:border-purple-400 hover:bg-purple-500/30 text-purple-100 hover:text-white text-xs md:text-base font-bold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">Admin</Link>
+          <nav 
+            className="flex flex-row md:flex-wrap overflow-x-auto md:overflow-visible justify-start md:justify-center gap-3 md:gap-4 items-center w-full md:w-auto mt-3 md:mt-0 pb-1 md:pb-0 px-1 md:px-0"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            <Link to="/join" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 bg-white/5 md:bg-transparent text-gray-200 hover:text-white text-sm md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Join Quiz</Link>
+            <Link to="/student/dashboard" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 bg-white/5 md:bg-transparent text-gray-200 hover:text-white text-sm md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">My Events</Link>
+            <Link to="/verify-certificate" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 rounded-full border border-transparent hover:border-blue-400/50 hover:bg-blue-500/10 bg-white/5 md:bg-transparent text-gray-200 hover:text-white text-sm md:text-base font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">Verify</Link>
+            <Link to="/admin" className="whitespace-nowrap flex-shrink-0 px-4 py-2 md:px-4 md:py-2 bg-purple-500/20 md:bg-purple-500/10 rounded-full border border-transparent hover:border-purple-400 hover:bg-purple-500/30 text-purple-100 hover:text-white text-sm md:text-base font-bold tracking-wide transition-all duration-300 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">Admin</Link>
           </nav>
         </div>
       </header>
