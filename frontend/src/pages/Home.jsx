@@ -5,10 +5,10 @@ const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#050914] flex flex-col font-sans text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#050914] flex flex-col text-white relative overflow-hidden" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <style>
         {`
-          @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Pacifico&display=swap');
         `}
       </style>
       
@@ -26,8 +26,8 @@ const Home = () => {
           <div className="flex items-center gap-3 md:gap-4">
             <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover shadow-[0_0_15px_rgba(59,130,246,0.3)] border-2 border-blue-400/30" />
             <span 
-              className="text-xl md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-              style={{ fontFamily: "'Righteous', cursive" }}
+              className="text-2xl md:text-3xl tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+              style={{ fontFamily: "'Pacifico', cursive", fontWeight: 400, paddingTop: '4px' }}
             >
               The Engg Circle
             </span>
