@@ -31,15 +31,9 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-// Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-  // Serve static files from the React frontend app
-  app.use(express.static(path.join(__dirname, '../../frontend/dist')));
-  
-  // Anything that doesn't match the API routes should be served the React app
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
-  });
-}
+// Backend is running as a standalone API
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'API is running' });
+});
 
 module.exports = app;
