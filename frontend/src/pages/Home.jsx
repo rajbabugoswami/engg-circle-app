@@ -6,6 +6,12 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-[#050914] flex flex-col font-sans text-white relative overflow-hidden">
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+        `}
+      </style>
+      
       {/* Background logo - highly visible behind text */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 sm:w-[350px] sm:h-[350px] md:w-[600px] md:h-[600px] opacity-30 bg-center bg-no-repeat bg-cover rounded-full pointer-events-none" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
       <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob pointer-events-none"></div>
@@ -16,9 +22,15 @@ const Home = () => {
       <header className="relative z-50 bg-white/5 backdrop-blur-md border-b border-blue-500/20 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
           
-          {/* Left: Logo */}
-          <div className="flex items-center">
+          {/* Left: Logo and Brand Name */}
+          <div className="flex items-center gap-3 md:gap-4">
             <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover shadow-[0_0_15px_rgba(59,130,246,0.3)] border-2 border-blue-400/30" />
+            <span 
+              className="text-xl md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+              style={{ fontFamily: "'Righteous', cursive" }}
+            >
+              The Engg Circle
+            </span>
           </div>
           
           {/* Right: Desktop Nav */}
