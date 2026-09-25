@@ -61,7 +61,7 @@ const initSocket = (server) => {
               FROM participants p 
               LEFT JOIN answers a ON p.id = a.participant_id
               WHERE p.event_id = ? 
-              GROUP BY p.id
+              GROUP BY p.id, p.name, p.score, p.joined_at
               ORDER BY p.score DESC, total_time ASC, p.joined_at ASC
             `, [eventId]);
             
@@ -104,7 +104,7 @@ const initSocket = (server) => {
               FROM participants p 
               LEFT JOIN answers a ON p.id = a.participant_id
               WHERE p.event_id = ? 
-              GROUP BY p.id
+              GROUP BY p.id, p.name, p.score, p.joined_at
               ORDER BY p.score DESC, total_time ASC, p.joined_at ASC 
               LIMIT 10
             `, [eventId]);

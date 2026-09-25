@@ -63,7 +63,7 @@ const getResults = async (req, res) => {
       LEFT JOIN certificates c ON p.id = c.participant_id
       LEFT JOIN answers a ON p.id = a.participant_id
       WHERE p.event_id = ? 
-      GROUP BY p.id, c.certificate_id, c.pdf_url, c.email_status
+      GROUP BY p.id, p.name, p.email, p.score, p.rank_pos, p.joined_at, c.certificate_id, c.pdf_url, c.email_status
       ORDER BY p.score DESC, total_time ASC, p.joined_at ASC
     `, [eventId]);
     
