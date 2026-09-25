@@ -155,23 +155,6 @@ const verifyCertificate = async (req, res) => {
   }
 };
 
-const downloadCertificate = async (req, res) => {
-  try {
-    const { certificateId } = req.params;
-    const [rows] = await pool.query('SELECT participant_id, event_id FROM certificates WHERE certificate_id = ?', [certificateId]);
-    if (rows.length === 0) return res.status(404).json({ message: 'Certificate not found' });
-    
-    const { participant_id, event_id } = rows[0];
-    const pdfBytes = await createPdfBuffer(participant_id, event_id, certificateId);
-    
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${certificateId}.pdf"`);
-    res.send(Buffer.from(pdfBytes));
-  } catch (error) {
-    console.error('Download error:', error);
-    res.status(500).json({ message: 'Server error generating PDF' });
-  }
-};
 const sendCertificateEmail = async (req, res) => {
   try {
     const { certificateId } = req.body;
