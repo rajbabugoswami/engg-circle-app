@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-[#0b1320] flex flex-col font-sans text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#050914] flex flex-col font-sans text-white relative overflow-hidden">
       {/* Background logo - glowing circle like the navbar logo */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] opacity-10 bg-center bg-no-repeat bg-cover rounded-full shadow-[0_0_50px_rgba(59,130,246,0.5)] border-4 border-blue-400/30" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
-      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob"></div>
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#2a9df4] rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-2000"></div>
-      <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-400 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob animation-delay-4000"></div>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/20 rounded-full mix-blend-screen filter blur-[120px] opacity-60 pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] opacity-[0.03] bg-center bg-no-repeat bg-cover rounded-full shadow-[0_0_30px_rgba(59,130,246,0.2)] border-2 border-blue-400/10 pointer-events-none" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-2000 pointer-events-none"></div>
+      <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-4000 pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full mix-blend-screen filter blur-[150px] opacity-20 pointer-events-none"></div>
 
       <header className="relative z-10 bg-white/5 backdrop-blur-md border-b border-blue-500/20 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4">
