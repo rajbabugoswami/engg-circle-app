@@ -15,6 +15,7 @@ const QuestionManagement = () => {
     marks: 10,
     time_limit: 30
   });
+  const [editingQuestionId, setEditingQuestionId] = useState(null);
   const [imageFile, setImageFile] = useState(null);
 
   // AI Generator state
@@ -39,7 +40,7 @@ const QuestionManagement = () => {
     }
   };
 
-  const handleAddQuestion = async (e) => {
+  const handleSubmitQuestion = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('adminToken');
     
@@ -48,18 +49,64 @@ const QuestionManagement = () => {
     if (imageFile) formData.append('image', imageFile);
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/questions`, formData, {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      if (editingQuestionId) {
+        await axios.put(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/questions/${editingQuestionId}`, formData, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        setEditingQuestionId(null);
+      } else {
+        await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/questions`, formData, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
       fetchQuestions();
       setNewQuestion({ question_text: '', option_a: '', option_b: '', option_c: '', option_d: '', correct_option: 'A', marks: 10, time_limit: 30 });
       setImageFile(null);
     } catch (error) {
-      console.error('Error adding question', error);
-      alert('Failed to add question');
+      console.error('Error saving question', error);
+      alert('Failed to save question');
+    }
+  };
+
+  const handleEditClick = (q) => {
+    setEditingQuestionId(q.id);
+    setNewQuestion({
+      question_text: q.question_text,
+      option_a: q.option_a,
+      option_b: q.option_b,
+      option_c: q.option_c,
+      option_d: q.option_d,
+      correct_option: q.correct_option,
+      marks: q.marks,
+      time_limit: q.time_limit
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingQuestionId(null);
+    setNewQuestion({ question_text: '', option_a: '', option_b: '', option_c: '', option_d: '', correct_option: 'A', marks: 10, time_limit: 30 });
+    setImageFile(null);
+  };
+
+  const handleDeleteQuestion = async (questionId) => {
+    if (!window.confirm('Are you sure you want to delete this question?')) return;
+    
+    const token = localStorage.getItem('adminToken');
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/questions/${questionId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchQuestions();
+    } catch (error) {
+      console.error('Error deleting question', error);
+      alert('Failed to delete question');
     }
   };
 
@@ -130,8 +177,13 @@ const QuestionManagement = () => {
 
         {/* Add Question Form */}
         <div className="bg-white p-6 rounded-lg shadow mb-8 border-t-4 border-indigo-600">
-          <h2 className="text-xl font-bold mb-4">Add New Question</h2>
-          <form onSubmit={handleAddQuestion} className="space-y-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">{editingQuestionId ? 'Edit Question' : 'Add New Question'}</h2>
+            {editingQuestionId && (
+              <button type="button" onClick={handleCancelEdit} className="text-gray-500 hover:text-gray-700 font-medium">Cancel Edit</button>
+            )}
+          </div>
+          <form onSubmit={handleSubmitQuestion} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Question Text</label>
               <textarea required className="mt-1 block w-full border border-gray-300 rounded p-2" rows="3"
@@ -178,7 +230,7 @@ const QuestionManagement = () => {
             </div>
 
             <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded hover:bg-indigo-700 transition">
-              Add Question
+              {editingQuestionId ? 'Update Question' : 'Add Question'}
             </button>
           </form>
         </div>
@@ -191,7 +243,21 @@ const QuestionManagement = () => {
               <div key={q.id} className="bg-white p-4 rounded-lg shadow border border-gray-200">
                 <div className="flex justify-between">
                   <h3 className="font-bold text-lg">Q{idx + 1}. {q.question_text}</h3>
-                  <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded font-bold">{q.marks} pts | {q.time_limit}s</span>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded font-bold">{q.marks} pts | {q.time_limit}s</span>
+                    <button 
+                      onClick={() => handleEditClick(q)}
+                      className="text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-2 py-1 rounded text-xs font-bold transition"
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteQuestion(q.id)}
+                      className="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-xs font-bold transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
                 {q.image_url && <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${q.image_url}`} alt="Q Img" className="mt-2 max-h-32 rounded border border-gray-300" />}
                 <div className="mt-3 grid grid-cols-2 gap-2 text-sm">

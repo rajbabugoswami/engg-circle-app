@@ -61,7 +61,7 @@ Each object must have these exact keys:
 "correct_option": The correct option strictly as one of: "A", "B", "C", "D".`;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
+        model: 'gemini-3.7-flash',
         contents: systemInstruction,
         config: {
             responseMimeType: "application/json",
@@ -102,4 +102,50 @@ Each object must have these exact keys:
   }
 };
 
-module.exports = { getQuestions, addQuestion, generateQuestionsWithAI };
+const deleteQuestion = async (req, res) => {
+  try {
+    const { eventId, questionId } = req.params;
+    
+    // Check if event belongs to admin
+    const [events] = await pool.query('SELECT id FROM events WHERE id = ? AND admin_id = ?', [eventId, req.admin.id]);
+    if (events.length === 0) return res.status(403).json({ message: 'Unauthorized' });
+
+    await pool.query('DELETE FROM questions WHERE id = ? AND event_id = ?', [questionId, eventId]);
+    res.json({ message: 'Question deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting question:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const updateQuestion = async (req, res) => {
+  try {
+    const { eventId, questionId } = req.params;
+    const { question_text, option_a, option_b, option_c, option_d, correct_option, marks, negative_marks, time_limit } = req.body;
+    
+    // Check if event belongs to admin
+    const [events] = await pool.query('SELECT id FROM events WHERE id = ? AND admin_id = ?', [eventId, req.admin.id]);
+    if (events.length === 0) return res.status(403).json({ message: 'Unauthorized' });
+
+    let query = `UPDATE questions SET question_text = ?, option_a = ?, option_b = ?, option_c = ?, option_d = ?, correct_option = ?, marks = ?, negative_marks = ?, time_limit = ?`;
+    const params = [question_text, option_a, option_b, option_c, option_d, correct_option, marks || 10, negative_marks || 0, time_limit || 30];
+
+    if (req.file) {
+      const image_url = `/uploads/questions/${req.file.filename}`;
+      query += `, image_url = ?`;
+      params.push(image_url);
+    }
+    
+    query += ` WHERE id = ? AND event_id = ?`;
+    params.push(questionId, eventId);
+
+    await pool.query(query, params);
+
+    res.json({ message: 'Question updated successfully' });
+  } catch (error) {
+    console.error('Error updating question:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getQuestions, addQuestion, generateQuestionsWithAI, deleteQuestion, updateQuestion };
