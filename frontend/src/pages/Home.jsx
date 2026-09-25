@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 const Home = () => {
   return (
     <div className="min-h-screen bg-[#050914] flex flex-col font-sans text-white relative overflow-hidden">
-      {/* Background logo - glowing circle like the navbar logo */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] opacity-[0.03] bg-center bg-no-repeat bg-cover rounded-full shadow-[0_0_30px_rgba(59,130,246,0.2)] border-2 border-blue-400/10 pointer-events-none" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
+      {/* Background logo - highly visible behind text */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] md:w-[600px] md:h-[600px] opacity-30 bg-center bg-no-repeat bg-cover rounded-full pointer-events-none" style={{ backgroundImage: "url('/logo.jpeg')" }}></div>
       <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob pointer-events-none"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-2000 pointer-events-none"></div>
       <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-4000 pointer-events-none"></div>
@@ -29,7 +29,7 @@ const Home = () => {
       </header>
 
       <main className="flex-grow flex items-center justify-center relative z-10 p-4 md:p-8">
-        <div className="text-center py-12 px-6 md:py-20 md:px-24 max-w-5xl mx-auto bg-white/5 backdrop-blur-lg rounded-[3rem] md:rounded-full shadow-[0_0_40px_rgba(59,130,246,0.3)] border-2 border-blue-400/30 flex flex-col justify-center items-center">
+        <div className="text-center px-4 max-w-5xl mx-auto flex flex-col justify-center items-center">
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 mt-4">
             Talk. Build. <br />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2a9df4] to-blue-300">Innovate.</span>
