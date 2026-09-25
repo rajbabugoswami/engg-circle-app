@@ -82,7 +82,9 @@ const QuestionManagement = () => {
       setAiPrompt('');
       fetchQuestions();
     } catch (error) {
-      setAiError(error.response?.data?.message || 'Failed to generate questions with AI.');
+      const errorMsg = error.response?.data?.message;
+      const errorDetail = error.response?.data?.error;
+      setAiError(errorDetail ? `${errorMsg} - ${errorDetail}` : (errorMsg || 'Failed to generate questions with AI.'));
     } finally {
       setIsAiLoading(false);
     }

@@ -68,7 +68,18 @@ Each object must have these exact keys:
         }
     });
     
-    let questionsArray = JSON.parse(response.text);
+    let rawText = response.text.trim();
+    if (rawText.startsWith('```')) {
+       rawText = rawText.replace(/^```(json)?\n?/, '').replace(/\n?```$/, '').trim();
+    }
+    
+    let questionsArray;
+    try {
+      questionsArray = JSON.parse(rawText);
+    } catch (e) {
+      throw new Error("AI returned invalid JSON: " + rawText);
+    }
+    
     if (!Array.isArray(questionsArray)) {
         // Fallback if it returned an object with a nested array
         questionsArray = questionsArray.questions || Object.values(questionsArray)[0];
