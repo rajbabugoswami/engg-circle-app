@@ -106,9 +106,9 @@ const CertificateEditor = () => {
   if (loading) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Certificate Designer - {event?.name}</h2>
           <Link to="/admin/dashboard" className="text-indigo-600 hover:text-indigo-800 font-medium">&larr; Back to Dashboard</Link>
         </div>

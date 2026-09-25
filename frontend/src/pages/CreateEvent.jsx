@@ -39,8 +39,8 @@ const CreateEvent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+      <div className="max-w-3xl mx-auto bg-white p-4 md:p-8 rounded-lg shadow">
         <h2 className="text-2xl font-bold mb-6 text-gray-900">Create New Event / Quiz</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           

@@ -25,9 +25,9 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black p-8 text-white relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black p-4 md:p-8 text-white relative overflow-hidden">
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-12">
           <Link to="/" className="text-gray-300 hover:text-white font-medium">&larr; Back to Home</Link>
           <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Student Dashboard</h1>
         </div>
@@ -57,7 +57,7 @@ const StudentDashboard = () => {
           </div>
         ) : (
           <div>
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
               <h2 className="text-2xl font-bold">Results for {email}</h2>
               <button onClick={() => setResults(null)} className="text-purple-400 hover:text-white underline font-semibold bg-white/10 px-4 py-2 rounded-lg">Use different email</button>
             </div>

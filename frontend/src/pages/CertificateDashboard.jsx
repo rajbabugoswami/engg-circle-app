@@ -201,11 +201,11 @@ const CertificateDashboard = () => {
   if (!event) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Certificate Dashboard: {event.name}</h1>
-          <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 text-center sm:text-left">Certificate Dashboard: {event.name}</h1>
+          <div className="flex flex-col sm:flex-row gap-4">
             <Link to={`/admin/events/${eventId}/certificate-editor`} className="bg-purple-600 text-white px-4 py-2 rounded font-bold hover:bg-purple-700">
               Customize Certificate Layout
             </Link>

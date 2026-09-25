@@ -138,9 +138,9 @@ const QuestionManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Manage Questions</h1>
           <Link to="/admin/dashboard" className="text-indigo-600 hover:underline">Back to Dashboard</Link>
         </div>
@@ -160,8 +160,8 @@ const QuestionManagement = () => {
                 value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}></textarea>
             </div>
             
-            <div className="flex gap-4 items-end">
-              <div className="w-32">
+            <div className="flex flex-col sm:flex-row gap-4 sm:items-end">
+              <div className="w-full sm:w-32">
                 <label className="block text-sm font-medium text-purple-100 mb-1">No. of Questions</label>
                 <input type="number" min="1" max="50" required className="w-full border-none rounded p-2 text-gray-900"
                   value={aiCount} onChange={e => setAiCount(parseInt(e.target.value))} />
@@ -241,7 +241,7 @@ const QuestionManagement = () => {
           <div className="space-y-4">
             {questions.map((q, idx) => (
               <div key={q.id} className="bg-white p-4 rounded-lg shadow border border-gray-200">
-                <div className="flex justify-between">
+                <div className="flex flex-col sm:flex-row justify-between gap-2">
                   <h3 className="font-bold text-lg">Q{idx + 1}. {q.question_text}</h3>
                   <div className="flex items-center gap-2">
                     <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded font-bold">{q.marks} pts | {q.time_limit}s</span>
@@ -260,7 +260,7 @@ const QuestionManagement = () => {
                   </div>
                 </div>
                 {q.image_url && <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${q.image_url}`} alt="Q Img" className="mt-2 max-h-32 rounded border border-gray-300" />}
-                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                   {['A', 'B', 'C', 'D'].map(opt => (
                     <div key={opt} className={`p-2 rounded ${q.correct_option === opt ? 'bg-green-100 border border-green-400 font-bold' : 'bg-gray-50 border border-gray-200'}`}>
                       {opt}. {q[`option_${opt.toLowerCase()}`]}

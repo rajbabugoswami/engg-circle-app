@@ -100,11 +100,11 @@ const Results = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-lg shadow">
-          <h1 className="text-3xl font-bold text-gray-900">Results: {eventName}</h1>
-          <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 bg-white p-4 md:p-6 rounded-lg shadow">
+          <h1 className="text-3xl font-bold text-gray-900 text-center md:text-left">Results: {eventName}</h1>
+          <div className="flex flex-wrap justify-center gap-4">
             <button onClick={exportToExcel} className="bg-green-600 text-white px-4 py-2 rounded font-bold hover:bg-green-700">
               Export Excel
             </button>
@@ -115,7 +115,7 @@ const Results = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>

@@ -11,14 +11,14 @@ const Home = () => {
       <div className="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
       <header className="relative z-10 glass-dark">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-12 w-auto object-contain" />
             <div className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-200">
               The Engg Circle
             </div>
           </div>
-          <nav className="space-x-6">
+          <nav className="flex flex-wrap justify-center gap-4 md:gap-6">
             <Link to="/join" className="text-gray-300 hover:text-white font-medium transition-colors">Join Quiz</Link>
             <Link to="/student/dashboard" className="text-gray-300 hover:text-white font-medium transition-colors">My Events</Link>
             <Link to="/verify-certificate" className="text-gray-300 hover:text-white font-medium transition-colors">Verify</Link>
