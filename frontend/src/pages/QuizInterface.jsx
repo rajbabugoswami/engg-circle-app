@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import axios from 'axios';
 
 const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
 
@@ -16,6 +17,29 @@ const QuizInterface = () => {
   const [presentationUrl, setPresentationUrl] = useState(null);
   const [finalRank, setFinalRank] = useState(null);
   const [finalScore, setFinalScore] = useState(0);
+  
+  const [certUrl, setCertUrl] = useState(null);
+  const [isCheckingCert, setIsCheckingCert] = useState(false);
+  const [certError, setCertError] = useState('');
+
+  const checkCertificate = async () => {
+    setIsCheckingCert(true);
+    setCertError('');
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/participants/${session.participantId}/certificate`);
+      if (res.data && res.data.pdf_url) {
+        setCertUrl(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${res.data.pdf_url}`);
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 404) {
+        setCertError('Your certificate is still generating or you did not qualify. Please try again in a moment.');
+      } else {
+        setCertError('Error checking certificate. Please try again later.');
+      }
+    } finally {
+      setIsCheckingCert(false);
+    }
+  };
 
   useEffect(() => {
     const s = localStorage.getItem('participantSession');
@@ -234,8 +258,30 @@ const QuizInterface = () => {
               </div>
             )}
             
-            <div className="mt-10 p-4 bg-yellow-50 text-yellow-800 rounded-xl border border-yellow-200 font-medium">
-              Keep an eye on your email for your certificate!
+            <div className="mt-10 p-6 bg-indigo-50 rounded-2xl border border-indigo-100">
+              <h3 className="text-xl font-bold text-indigo-900 mb-4">Your Certificate</h3>
+              {certUrl ? (
+                <a 
+                  href={certUrl} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl shadow-lg inline-block text-lg transform transition-transform hover:-translate-y-1 hover:shadow-xl"
+                >
+                  ↓ Download My Certificate
+                </a>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <p className="text-indigo-700 mb-4 font-medium">Your digital certificate with a unique QR code is being prepared.</p>
+                  <button 
+                    onClick={checkCertificate}
+                    disabled={isCheckingCert}
+                    className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow hover:bg-indigo-700 disabled:opacity-50 transition-all"
+                  >
+                    {isCheckingCert ? 'Checking...' : 'Check For Certificate'}
+                  </button>
+                  {certError && <p className="text-red-500 mt-3 font-medium text-sm">{certError}</p>}
+                </div>
+              )}
             </div>
           </div>
         )}

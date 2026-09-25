@@ -97,4 +97,23 @@ const getMyEvents = async (req, res) => {
   }
 };
 
-module.exports = { register, joinQuiz, getMyEvents };
+const getParticipantCertificate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [results] = await pool.query(`
+      SELECT certificate_id, pdf_url
+      FROM certificates
+      WHERE participant_id = ?
+    `, [id]);
+    
+    if (results.length > 0) {
+      res.json(results[0]);
+    } else {
+      res.status(404).json({ message: 'Certificate not ready yet.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { register, joinQuiz, getMyEvents, getParticipantCertificate };
