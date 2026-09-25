@@ -13,7 +13,7 @@ const Home = () => {
       <header className="relative z-10 glass-dark">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center justify-center">
-            <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-20 md:h-24 w-auto object-contain" />
+            <img src="/logo.jpeg" alt="The Engg Circle Logo" className="h-14 md:h-16 w-auto object-contain" />
           </div>
           <nav className="flex flex-wrap justify-center gap-4 md:gap-6">
             <Link to="/join" className="text-gray-300 hover:text-white font-medium transition-colors">Join Quiz</Link>
