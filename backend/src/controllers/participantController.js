@@ -2,10 +2,10 @@ const pool = require('../config/db');
 
 const joinQuiz = async (req, res) => {
   try {
-    const { quizCode, name, email, college, phone } = req.body;
+    const { quizCode, name, email, college, phone, course, year, roll_number } = req.body;
     
     // Check if event exists and is active
-    const [events] = await pool.query('SELECT id, status FROM events WHERE quiz_code = ? AND is_active = TRUE', [quizCode]);
+    const [events] = await pool.query('SELECT * FROM events WHERE quiz_code = ? AND is_active = TRUE', [quizCode]);
     
     if (events.length === 0) {
       return res.status(404).json({ message: 'Invalid or inactive quiz code' });
@@ -21,13 +21,17 @@ const joinQuiz = async (req, res) => {
     
     let participantId;
     if (existing.length > 0) {
-      participantId = existing[0].id;
+      return res.status(400).json({ message: 'You have already registered for this event with this email.' });
     } else {
       const [result] = await pool.query(
-        'INSERT INTO participants (event_id, name, email, college, phone) VALUES (?, ?, ?, ?, ?)',
-        [event.id, name, email, college, phone]
+        'INSERT INTO participants (event_id, name, email, college, phone, course, year, roll_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [event.id, name, email, college, phone, course, year, roll_number]
       );
       participantId = result.insertId;
+      
+      // Send Registration Email in the background
+      const { sendRegistrationEmail } = require('../utils/emailService');
+      sendRegistrationEmail(email, name, event).catch(console.error);
     }
     
     res.json({
