@@ -86,4 +86,18 @@ const uploadTemplate = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, getResults, uploadTemplate };
+const saveTemplateConfig = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { config } = req.body; // should be a JS object
+    
+    await pool.query('UPDATE events SET cert_template_config = ? WHERE id = ? AND admin_id = ?', [JSON.stringify(config), eventId, req.admin.id]);
+    
+    res.json({ message: 'Configuration saved successfully' });
+  } catch (error) {
+    console.error('Save template config error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getEvents, getEvent, createEvent, updateEvent, deleteEvent, getResults, uploadTemplate, saveTemplateConfig };

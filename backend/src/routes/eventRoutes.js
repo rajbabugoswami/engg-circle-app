@@ -35,6 +35,7 @@ router.route('/:eventId/questions')
   .post(upload.single('image'), addQuestion);
 
 router.post('/:eventId/template', upload.single('template'), uploadTemplate);
+router.put('/:eventId/template-config', require('../controllers/eventController').saveTemplateConfig);
 
 router.route('/:eventId/results')
   .get(getResults);
