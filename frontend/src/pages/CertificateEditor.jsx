@@ -9,11 +9,6 @@ const CertificateEditor = () => {
   const [loading, setLoading] = useState(true);
   
   const [templateFile, setTemplateFile] = useState(null);
-
-  // AI Generator state
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isAiLoading, setIsAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
   
   // Fields that can be placed on the certificate
   const defaultFields = [
@@ -92,30 +87,6 @@ const CertificateEditor = () => {
     }
   };
 
-  const handleAIGenerate = async (e) => {
-    e.preventDefault();
-    if (!aiPrompt) return;
-    setIsAiLoading(true);
-    setAiError('');
-    try {
-      const token = localStorage.getItem('adminToken');
-      const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/events/${eventId}/template/ai-generate`, {
-        prompt: aiPrompt
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setEvent(prev => ({ ...prev, cert_template_url: res.data.url }));
-      alert('AI Template generated successfully!');
-      setAiPrompt('');
-    } catch (error) {
-      const errorMsg = error.response?.data?.message;
-      const errorDetail = error.response?.data?.error;
-      setAiError(errorDetail ? `${errorMsg} - ${errorDetail}` : (errorMsg || 'Failed to generate template.'));
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
-
   const handleImageClick = (e) => {
     if (!imageRef.current || !selectedFieldId) return;
 
@@ -155,26 +126,6 @@ const CertificateEditor = () => {
                 <button type="submit" disabled={!templateFile} className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400">
                   Upload Template
                 </button>
-              </form>
-            </div>
-
-            {/* AI Auto Generator Block */}
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-lg shadow-lg text-white">
-              <h3 className="font-bold text-lg mb-2 flex items-center gap-2">✨ AI Generator</h3>
-              <p className="mb-4 text-purple-100 text-sm">Describe the certificate design, and AI will generate a background template for you.</p>
-              
-              <form onSubmit={handleAIGenerate} className="space-y-4">
-                <div>
-                  <textarea required className="w-full border-none rounded p-3 text-gray-900 text-sm" rows="2"
-                    placeholder="E.g., A modern blue and gold award certificate with geometric shapes..."
-                    value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}></textarea>
-                </div>
-                
-                <button type="submit" disabled={isAiLoading}
-                  className="w-full bg-white text-purple-700 py-2 rounded font-bold hover:bg-gray-100 disabled:opacity-50">
-                  {isAiLoading ? '🎨 Generating...' : 'Generate Template'}
-                </button>
-                {aiError && <div className="text-red-200 text-sm bg-red-900/30 p-2 rounded">{aiError}</div>}
               </form>
             </div>
 
