@@ -15,6 +15,7 @@ import LiveControl from './pages/LiveControl';
 import CertificateDashboard from './pages/CertificateDashboard';
 import CertificateEditor from './pages/CertificateEditor';
 import AdminSettings from './pages/AdminSettings';
+import GalleryManager from './pages/GalleryManager';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/settings" element={<AdminSettings />} />
+        <Route path="/admin/gallery" element={<GalleryManager />} />
         <Route path="/admin/create-event" element={<CreateEvent />} />
         <Route path="/admin/events/:eventId/questions" element={<QuestionManagement />} />
         <Route path="/admin/events/:eventId/presentation" element={<PresentationUpload />} />

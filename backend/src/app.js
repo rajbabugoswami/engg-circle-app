@@ -6,6 +6,7 @@ const questionRoutes = require('./routes/questionRoutes');
 const participantRoutes = require('./routes/participantRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
 const presentationRoutes = require('./routes/presentationRoutes');
+const galleryRoutes = require('./routes/galleryRoutes');
 const path = require('path');
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/certificates', certificateRoutes);
+app.use('/api/gallery', galleryRoutes);
 app.use('/api', presentationRoutes);
 
 app.get('/api/health', (req, res) => {
