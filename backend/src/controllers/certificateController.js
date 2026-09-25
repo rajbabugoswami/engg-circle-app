@@ -158,77 +158,20 @@ const verifyCertificate = async (req, res) => {
 const sendCertificateEmail = async (req, res) => {
   try {
     const { certificateId } = req.body;
-    const [rows] = await pool.query(`
-      SELECT c.*, p.name, p.email, e.name as event_name 
-      FROM certificates c
-      JOIN participants p ON c.participant_id = p.id
-      JOIN events e ON c.event_id = e.id
-      WHERE c.certificate_id = ?
-    `, [certificateId]);
+    
+    // Check if certificate exists
+    const [certRows] = await pool.query('SELECT certificate_id FROM certificates WHERE certificate_id = ?', [certificateId]);
+    if (certRows.length === 0) return res.status(404).json({ message: 'Certificate not found' });
+    
+    // Email sending is disabled as per user request to rely only on direct downloads
+    // We just mark it as AVAILABLE to indicate it's ready in the app.
+    await pool.query('UPDATE certificates SET email_status = ? WHERE certificate_id = ?', ['AVAILABLE', certificateId]);
 
-    if (rows.length === 0) return res.status(404).json({ message: 'Certificate not found' });
-    const cert = rows[0];
-
-    const pdfBytes = await createPdfBuffer(cert.participant_id, cert.event_id, certificateId);
-
-    if (process.env.RESEND_API_KEY) {
-      const pdfBase64 = Buffer.from(pdfBytes).toString('base64');
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          from: 'onboarding@resend.dev',
-          to: cert.email,
-          subject: `Your Certificate – ${cert.event_name}`,
-          html: `<p>Hello ${cert.name},</p><p>Congratulations! You successfully participated in ${cert.event_name}.</p><p>Score: ${cert.score}<br>Certificate ID: ${cert.certificate_id}</p><p>Your certificate is attached.</p><br><p>Follow us on Instagram for updates:<br><a href="https://www.instagram.com/the_engg_circle?stkn=a3Rod3RmaW83cTV4">the_engg_circle</a></p>`,
-          attachments: [
-            {
-              filename: `${cert.certificate_id}.pdf`,
-              content: pdfBase64
-            }
-          ]
-        })
-      });
-      const resData = await response.json();
-      if (!response.ok) {
-        throw new Error(resData.message || 'Resend API Error');
-      }
-    } else {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        secure: false,
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD
-        }
-      });
-
-      await transporter.sendMail({
-        from: process.env.SMTP_FROM,
-        to: cert.email,
-        subject: `Your Certificate – ${cert.event_name}`,
-        text: `Hello ${cert.name},\n\nCongratulations! You successfully participated in ${cert.event_name}.\nScore: ${cert.score}\nCertificate ID: ${cert.certificate_id}\n\nYour certificate is attached.\n\nFollow us on Instagram for updates:\nhttps://www.instagram.com/the_engg_circle?stkn=a3Rod3RmaW83cTV4`,
-        attachments: [{ filename: `${cert.certificate_id}.pdf`, content: Buffer.from(pdfBytes) }]
-      });
-    }
-
-    await pool.query('UPDATE certificates SET email_status = ? WHERE certificate_id = ?', ['SENT', certificateId]);
-
-    res.json({ message: 'Email sent successfully' });
+    res.json({ message: 'Certificate generated and available in app successfully.' });
   } catch (error) {
-    console.error('Email error:', error);
+    console.error('Status update error:', error);
     await pool.query('UPDATE certificates SET email_status = ? WHERE certificate_id = ?', ['FAILED', req.body.certificateId]);
-    
-    let errorMessage = 'Failed to send email. Check SMTP credentials.';
-    if (error.message.includes('Invalid login') || error.message.includes('Authentication')) {
-      errorMessage = 'Email Authentication Failed. If using Gmail, you MUST use a 16-letter App Password, not your normal password.';
-    }
-    
-    res.status(500).json({ message: 'Failed to send email', error: errorMessage, rawError: error.message });
+    res.status(500).json({ message: 'Failed to update certificate status', rawError: error.message });
   }
 };
 
@@ -248,19 +191,15 @@ const resendCertificate = async (req, res) => {
 const resendAllFailed = async (req, res) => {
   try {
     const { eventId } = req.params;
-    const [certs] = await pool.query("SELECT certificate_id FROM certificates WHERE event_id = ? AND email_status IN ('FAILED', 'PENDING')", [eventId]);
+    const [certs] = await pool.query("SELECT certificate_id FROM certificates WHERE event_id = ? AND email_status != 'AVAILABLE'", [eventId]);
     
-    res.json({ message: 'Resend triggered for failed/pending emails. They will process in the background.' });
+    res.json({ message: 'Missing certificates are being generated and made available in the background.' });
     
     for (let c of certs) {
       try {
-        await pool.query("UPDATE certificates SET email_status = 'PENDING' WHERE certificate_id = ?", [c.certificate_id]);
-        
-        const mockReq = { body: { certificateId: c.certificate_id } };
-        const mockRes = { json: () => {}, status: () => mockRes };
-        await sendCertificateEmail(mockReq, mockRes);
+        await pool.query("UPDATE certificates SET email_status = 'AVAILABLE' WHERE certificate_id = ?", [c.certificate_id]);
       } catch (err) {
-        console.error('Error resending cert:', c.certificate_id, err);
+        console.error('Error updating cert:', c.certificate_id, err);
       }
     }
   } catch (error) {

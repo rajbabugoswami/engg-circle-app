@@ -268,7 +268,7 @@ const CertificateDashboard = () => {
             <h2 className="text-xl font-bold">Participants & Certificates</h2>
             <div className="flex gap-4 flex-wrap">
               <button onClick={handleGenerateAll} className="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700">
-                GENERATE & SEND ALL
+                GENERATE ALL
               </button>
               <button onClick={() => {
                 const token = localStorage.getItem('adminToken');
@@ -283,7 +283,7 @@ const CertificateDashboard = () => {
                 Export PDF
               </button>
               <button onClick={handleResendAllFailed} className="bg-orange-500 text-white px-4 py-2 rounded font-bold hover:bg-orange-600">
-                RESEND ALL FAILED EMAILS
+                GENERATE MISSING
               </button>
             </div>
           </div>
@@ -310,6 +310,7 @@ const CertificateDashboard = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">{r.certificate_id || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
+                      {r.email_status === 'AVAILABLE' && <span className="text-green-600 font-bold">✓ AVAILABLE IN APP</span>}
                       {r.email_status === 'SENT' && <span className="text-green-600 font-bold">✓ SENT</span>}
                       {r.email_status === 'FAILED' && <span className="text-red-600 font-bold">✗ FAILED</span>}
                       {r.email_status === 'PENDING' && <span className="text-yellow-600 font-bold">⏳ PENDING</span>}
@@ -318,8 +319,7 @@ const CertificateDashboard = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {r.pdf_url ? (
                         <>
-                          <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${r.pdf_url}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:text-indigo-900 mr-4">View</a>
-                          <button onClick={() => handleResend(r.id)} className="text-orange-600 hover:text-orange-900">Resend</button>
+                          <a href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${r.pdf_url}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:text-indigo-900 mr-4 font-bold">View</a>
                         </>
                       ) : (
                         <button onClick={() => handleGenerateSingle(r.id)} className="text-green-600 hover:text-green-900 font-bold">Generate</button>
