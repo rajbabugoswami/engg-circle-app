@@ -7,7 +7,7 @@ const pool = mysql.createPool({
     password: process.env.DATABASE_PASSWORD || '',
     database: process.env.DATABASE_NAME || 'quizlive',
     port: process.env.DATABASE_PORT || 3306,
-    ssl: { rejectUnauthorized: false }, // Required for Aiven/Cloud databases
+    ssl: { rejectUnauthorized: false }, // Required for Cloud databases (TiDB)
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
